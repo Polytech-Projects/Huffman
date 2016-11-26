@@ -1,8 +1,11 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include "tools.c"
+
 
 int main()
 {
-    printf("Salut ca marche wesh !");
+    lecture_fichier("test.txt");
+
     return EXIT_SUCCESS;
 }
+
