@@ -3,6 +3,6 @@
 
 int main()
 {
-    printf("Salut ca marche !");
+    printf("Salut ca marche wesh !");
     return EXIT_SUCCESS;
 }
