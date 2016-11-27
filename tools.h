@@ -17,15 +17,14 @@
 
 /**
  * @file tools.c
- * @brief
+ * @brief Regroupe les fonctions utilitaires
  *
  */
 
-#include <stdlib.h>
+#ifndef HUFFMAN_TOOLS_H
+#define HUFFMAN_TOOLS_H
 
+int lecture_fichier(char filename[]);
+int ecriture_fichier(char filename[]);
 
-int main()
-{
-    return EXIT_SUCCESS;
-}
-
+#endif //HUFFMAN_TOOLS_H

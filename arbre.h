@@ -21,11 +21,7 @@
  *
  */
 
-#include <stdlib.h>
+#ifndef HUFFMAN_ARBRE_H
+#define HUFFMAN_ARBRE_H
 
-
-int main()
-{
-    return EXIT_SUCCESS;
-}
-
+#endif //HUFFMAN_ARBRE_H
