@@ -24,7 +24,4 @@
 #ifndef HUFFMAN_TOOLS_H
 #define HUFFMAN_TOOLS_H
 
-int lecture_fichier(char filename[]);
-int ecriture_fichier(char filename[]);
-
 #endif //HUFFMAN_TOOLS_H
