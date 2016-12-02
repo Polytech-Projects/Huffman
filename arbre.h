@@ -24,4 +24,13 @@
 #ifndef HUFFMAN_ARBRE_H
 #define HUFFMAN_ARBRE_H
 
+typedef struct t_noeud {
+    struct t_noeud * parent;
+    struct t_noeud * fg; // Fils gauche
+    struct t_noeud * fd; // Fils droit
+    char val; // Contient la lettre ASCII
+    int ord_gal;
+    int poids; // Poids de 'val'
+} t_noeud, *ptr_t_noeud;
+
 #endif //HUFFMAN_ARBRE_H
