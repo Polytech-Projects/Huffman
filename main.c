@@ -21,11 +21,30 @@
  *
  */
 
+#include <stdio.h>
 #include <stdlib.h>
-
 
 int main()
 {
+    // On ouvre le fichier en mode lecture
+    FILE *file = fopen("../test.txt", "r");
+    if (file != NULL)
+    {
+        // longueur maximale d'une chaîne
+        char line[10];
+
+        // lire une chaîne, 1 lecture par boucle
+        while (fgets(line, sizeof(line), file) != NULL)
+        {
+            // afficher la chaîne en cours
+            printf("Ligne : %s ", line);
+        }
+        fclose(file);
+    } else
+    {
+        //renvoie l'erreur impechant l'ouverture de fichier
+        perror("test.txt");
+    }
     return EXIT_SUCCESS;
 }
 
