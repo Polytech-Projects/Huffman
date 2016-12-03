@@ -30,61 +30,29 @@
  *
  * @param val  valeur de l'élément
  */
-tpa cree_feuille(char val)
+tpn cree_feuille(char val, tpn parent)
 {
-    tpa feuille = (tpa)malloc(sizeof(t_arbre));
-    feuille->type = FEUILLE;
+    tpn feuille = (tpn)malloc(sizeof(t_noeud));
     feuille->val = val;
+    feuille->fg = TPN_NULL;
+    feuille->fd = TPN_NULL;
+    feuille->parent = parent;
     return feuille;
-}
-
-/** @brief Supprime un arbre complet
- * @todo implémenter la fonction
- *
- * @param arbre  l'arbre que l'on veut supprimer
- */
-void supprimer_arbre(tpa arbre)
-{
-
-}
-
-/** @brief Supprime un noeud et ses fils
- *
- * @param noeud  le noeud que l'on veut supprimer
- */
-void supprimer_noeud(tpa noeud)
-{
-    assert(noeud != TPA_NULL);
-
-}
-
-/** @brief Supprime une feuille
- *
- * @param feuille  la feuille qu'on veut supprimer
- */
-void supprimer_feuille(tpa feuille)
-{
-    assert(feuille != TPA_NULL);
-    // On averti le parent de la perte d'un de ses fils
-    if (feuille->parent != TPA_NULL)
-    {
-        // On cherche la bonne branche à reset
-        if (arbre_fd(feuille->parent) == feuille)
-            feuille->parent->fd = TPA_NULL;
-        else
-            feuille->parent->fg = TPA_NULL;
-    }
-    free(feuille);
 }
 
 /** @brief Retourne vrai si le paramètre est une feuille
  *
+ * Une feuille est un noeud qui a ses deux fils à NULL
  * @param element  l'élément à tester
  */
-int est_feuille(tpa element)
+int est_feuille(tpn element)
 {
-    assert(element != TPA_NULL);
-    return (element->type == FEUILLE);
+    assert(element != TPN_NULL);
+    /* Normalement seul la feuille gauche est à tester car par définition
+     * un noeud qui n'a qu'un fils a obligatoirement comme fils celui de
+     * gauche et non celui de droite.
+     */
+    return ((element->fg == TPN_NULL) && (element->fd == TPN_NULL));
 }
 
 /** @brief Créée un noeud et le renvoi
@@ -93,17 +61,10 @@ int est_feuille(tpa element)
  * @param fg  le fils gauche du noeud
  * @param fd  le fils droit du noeud
  */
-tpa cree_noeud(tpa parent, char val, tpa fg, tpa fd)
+tpn cree_noeud(tpn parent, char val, tpn fg, tpn fd)
 {
-    assert((fg != TPA_NULL) && (fd != TPA_NULL));
-    tpa noeud = (tpa)malloc(sizeof(t_arbre));
-    if (parent != TPA_NULL)
-        noeud->type = ARBRE;
-    else
-    {
-        noeud->type = NOEUD;
-        noeud->parent = parent;
-    }
+    tpn noeud = (tpn)malloc(sizeof(t_noeud));
+    noeud->parent = parent;
     noeud->val = val;
     noeud->fg = fg;
     noeud->fd = fd;
@@ -114,9 +75,9 @@ tpa cree_noeud(tpa parent, char val, tpa fg, tpa fd)
  *
  * @param noeud  le noeud dont on veut le fils
  */
-tpa arbre_fg(tpa noeud)
+tpn noeud_fg(tpn noeud)
 {
-    assert((noeud != TPA_NULL) && !est_feuille(noeud));
+    assert((noeud != TPN_NULL) && !est_feuille(noeud));
     return noeud->fg;
 }
 
@@ -124,9 +85,9 @@ tpa arbre_fg(tpa noeud)
  *
  * @param noeud  le noeud dont on veut le fils
  */
-tpa arbre_fd(tpa noeud)
+tpn noeud_fd(tpn noeud)
 {
-    assert((noeud != TPA_NULL) && !est_feuille(noeud));
+    assert((noeud != TPN_NULL) && !est_feuille(noeud));
     return noeud->fd;
 }
 
@@ -134,9 +95,9 @@ tpa arbre_fd(tpa noeud)
  *
  * @param elem  l'élément dont on veut la valeur
  */
-char arbre_valeur(tpa elem)
+char elem_valeur(tpn elem)
 {
-    assert(elem != TPA_NULL);
+    assert(elem != TPN_NULL);
     return elem->val;
 }
 
@@ -144,9 +105,9 @@ char arbre_valeur(tpa elem)
  *
  * @param elem  l'élément dont on veut l'ordre
  */
-int arbre_ordre(tpa elem)
+int elem_ordre(tpn elem)
 {
-    assert(elem != TPA_NULL);
+    assert(elem != TPN_NULL);
     return elem->ord_gal;
 }
 
@@ -154,8 +115,8 @@ int arbre_ordre(tpa elem)
  *
  * @param elem  l'élément dont on veut le poids
  */
-int arbre_poids(tpa elem)
+int elem_poids(tpn elem)
 {
-    assert(elem != TPA_NULL);
+    assert(elem != TPN_NULL);
     return elem->poids;
 }

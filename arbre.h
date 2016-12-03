@@ -24,33 +24,33 @@
 #ifndef HUFFMAN_ARBRE_H
 #define HUFFMAN_ARBRE_H
 
-#define TPA_NULL (tpa)NULL
+#define TPN_NULL (tpn)NULL
 
-typedef enum type_noeud {
-    ARBRE, NOEUD, FEUILLE
-} type_noeud;
-
-typedef struct t_arbre {
-    struct t_arbre * parent;
+/** @brief Représente un noeud ou feuille de l'arbre
+ *
+ * Un noeud a au moins un fils qui n'est pas NULL (s'il en qu'un seul,
+ * c'est obligatoirement le fils gauche qui est alloué en premier).
+ * Une feuille est un noeud qui n'a pas de fils (son fils droit et fils
+ * gauche sont tous les deux à NULL).
+ *
+ */
+typedef struct t_noeud {
+    struct t_noeud * parent;
     // Fils d'un noeud
-    struct t_arbre * fg;
-    struct t_arbre * fd;
-    type_noeud type; // Vaut 0 pour une feuille, 1 pour un noeud
+    struct t_noeud * fg;
+    struct t_noeud * fd;
     char val; // Contient le code ASCII
     int ord_gal; // Ordre de gallager
     int poids; // Poids de 'val'
-} t_arbre, * tpa;
+} t_noeud, *tpn;
 
-tpa cree_feuille(char val);
-void supprimer_arbre(tpa arbre);
-void supprimer_noeud(tpa noeud);
-void supprimer_feuille(tpa feuille);
-int est_feuille(tpa feuille);
-tpa cree_noeud(tpa parent, char val, tpa fg, tpa fd);
-tpa arbre_fg(tpa noeud);
-tpa arbre_fd(tpa noeud);
-char arbre_valeur(tpa elem);
-int arbre_ordre(tpa elem);
-int arbre_poids(tpa elem);
+tpn cree_feuille(char val, tpn parent);
+int est_feuille(tpn feuille);
+tpn cree_noeud(tpn parent, char val, tpn fg, tpn fd);
+tpn noeud_fg(tpn noeud);
+tpn noeud_fd(tpn noeud);
+char elem_valeur(tpn elem);
+int elem_ordre(tpn elem);
+int elem_poids(tpn elem);
 
 #endif //HUFFMAN_ARBRE_H
