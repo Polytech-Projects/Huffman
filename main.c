@@ -24,69 +24,57 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "constants.h"
+#include "tools.h"
 
-#define NOMBRE_DE_CHOIX 3
+/* Les différents choix pour le menu.
+ * Attention, les nombres associé aux choix doivent être positif et
+ * doivent se suivre (on peut changer leur ordre mais pas mettre
+ * d'écart entre eux.) */
+typedef enum e_choice
+{
+	COMPRESS = 1, DECOMPRESS = 2, COMPRESS_MSG = 3, CHOICE_NBR
+} e_choice;
+#define NOMBRE_DE_CHOIX CHOICE_NBR
 
 
 int main()
 {
-    int choix;
-    char fget;
+	int choix;
 
-    do
-    {
-        system(CLEAR);
-        printf("\n");
-        printf("\t\t--------------------\n");
-        printf("\t\t|Hoffman  Compressor|\n");  
-        printf("\t\t--------------------\n");
-        printf("\n");
-        printf("\n");
-        printf("\tQue voulez vous faire ?\n");
-        printf("\t\n");
-        printf("\t1 - Compresser un fichier\n");
-        printf("\t2 - Decompresser un fichier\n");
-        printf("\t3 - Compresser un message (dans un fichier)\n");
-        printf("\t0 - Quitter\n");
-        printf("\t\n");
-        printf("\tChoix :");
-        scanf("%d", &choix);
-        if (!(choix >= 0 && choix < NOMBRE_DE_CHOIX)){
-            system(CLEAR);
-            printf("\n\n\t choix inconnu ...\n\n");
-            printf("appuyez sur entree pour continuer...");
-            system(SYSREAD);
-        } 
-    }while (choix !=0);
-    system(CLEAR);
-    printf("\t\n");
-    printf("\t\taurevoir !\n");
-    printf("\n");
-    printf("appuyez sur entree pour continuer...");
-    system(SYSREAD);
-    system(CLEAR);
+	do
+	{
+		system(CLEAR);
+		printf("\n");
+		printf("\t\t--------------------\n");
+		printf("\t\t|Hoffman  Compressor|\n");
+		printf("\t\t--------------------\n");
+		printf("\n");
+		printf("\n");
+		printf("\tQue voulez vous faire ?\n");
+		printf("\t\n");
+		printf("\t%d - Compresser un fichier\n", COMPRESS);
+		printf("\t%d - Decompresser un fichier\n", DECOMPRESS);
+		printf("\t%d - Compresser un message (dans un fichier)\n", COMPRESS_MSG);
+		printf("\t0 - Quitter\n");
+		printf("\t\n");
+		printf("\tChoix :");
+		scanf("%d", &choix);
+	}
+	while (!(choix >= 0 && choix < NOMBRE_DE_CHOIX));
+	system(CLEAR);
 
-    /*
-    // On ouvre le fichier en mode lecture
-    FILE *file = fopen("../test.txt", "r");
-    if (file != NULL)
-    {
-        // longueur maximale d'une chaîne
-        char line[10];
+	switch (choix)
+	{
+		case COMPRESS:
+			compression("test.txt", "compresse.txt");
+		break;
+		case COMPRESS_MSG:
+		break;
+		case DECOMPRESS:
+		break;
+	}
 
-        // lire une chaîne, 1 lecture par boucle
-        while (fgets(line, sizeof(line), file) != NULL)
-        {
-            // afficher la chaîne en cours
-            printf("Ligne : %s ", line);
-        }
-        fclose(file);
-    } else
-    {
-        //renvoie l'erreur impechant l'ouverture de fichier
-        perror("test.txt");
-    }
-    return EXIT_SUCCESS;
-    */
+	printf("\n");
+	return EXIT_SUCCESS;
 }
 
