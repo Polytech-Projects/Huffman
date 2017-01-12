@@ -16,13 +16,15 @@
 
 
 /**
- * @file tools.c
+ * @file arbre.c
  * @brief
  *
  */
 
 #ifndef HUFFMAN_ARBRE_H
 #define HUFFMAN_ARBRE_H
+
+#include <limits.h>
 
 #define TPN_NULL (tpn)NULL
 
@@ -34,14 +36,17 @@
  * gauche sont tous les deux à NULL).
  *
  */
-typedef struct t_noeud {
-    struct t_noeud * parent;
-    // Fils d'un noeud
-    struct t_noeud * fg;
-    struct t_noeud * fd;
-    char val; // Contient le code ASCII
-    int ord_gal; // Ordre de gallager
-    int poids; // Poids de 'val'
+typedef struct t_noeud
+{
+	struct t_noeud *parent;
+	// Fils d'un noeud
+	struct t_noeud *fg;
+	struct t_noeud *fd;
+	/* Prend une valeur de la table ASCII ou bien celle de
+	 * 'caractère indéfini' -> SHRT_MAX. */
+	short val;
+	int ord_gal; // Ordre de gallager
+	int poids; // Poids de 'val'
 } t_noeud, *tpn;
 
 tpn cree_feuille(char val, tpn parent);
