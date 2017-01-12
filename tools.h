@@ -24,4 +24,8 @@
 #ifndef HUFFMAN_TOOLS_H
 #define HUFFMAN_TOOLS_H
 
+#include <stdio.h>
+
+void compression(const char *fal, const char *nf);
+
 #endif //HUFFMAN_TOOLS_H
