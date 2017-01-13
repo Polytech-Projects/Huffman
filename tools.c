@@ -54,6 +54,7 @@ void compression(const char *fal, const char *nf)
 	long int tailleFichier = 0;
 	// Utilisé pour parcourir le fichier
 	long int i;
+	int j;
 	// caractère actuel
 	char c;
 	// Pointeur sur le fichier à lire.
@@ -79,6 +80,8 @@ void compression(const char *fal, const char *nf)
 		rewind(pfl); // Important, remettre le curseur en début de fichier
 		printf ("Le fichier contient: %ld caractères.\n", tailleFichier);
 
+		// TRAITEMENT DU 1ER CAS A PART
+
 		for (i = 0; i < tailleFichier; i++)
 		{
 			// Lecture du complète du fichier.
@@ -89,6 +92,43 @@ void compression(const char *fal, const char *nf)
 			printf("%c", c);
 
 			// Opérations sur l'arbre d'Huffman
+			tpn code = position_caracteres[c];
+
+			// Si le code n'est pas présent dans l'arbre
+			if (code == TPN_NULL)
+			{
+				/* On parcours l'ordre de Gallager pour obtenir la
+				 * feuille la plus basse dans l'arbre.
+				 * TODO: optimiser - stocker l'ordre de gallager le plus
+				 * grand dans un variable, évite le parcours. */
+				tpn derniere_feuille = TPN_NULL;
+				j = 0;
+				while (derniere_feuille == TPN_NULL && j < 256)
+				{
+					if (ordre_gallager[j] == TPN_NULL)
+						derniere_feuille = ordre_gallager[j-1];
+					else
+						j++;
+				}
+				/* Et on ajoute la nouvelle feuille à côté ou en
+				 * dessous de celle-ci. */
+				if (est_fg(derniere_feuille))
+				{
+					// On l'ajoute au fils droit du parent
+					code = cree_feuille(c, derniere_feuille->parent);
+					// Assigner ordre de Gallager et poids
+					code->ordre = elem_ordre(derniere_feuille) + 1;
+					code->poids = 1;
+				}
+				else
+				{
+					/* On doit créer un noeud à la place de la dernière
+					 * feuille et la placer dans sont fil gauche et ajouter
+					 * la nouvelle feuille en tant que fils droit. */
+					// Mettre à jour le tout les pointeurs....
+					tpn newNoeud = cree_noeud(derniere_feuille->parent, char val, tpn fg, tpn fd);
+				}
+			}
 		}
 		fclose(pfl);
 		fclose(pfe);
