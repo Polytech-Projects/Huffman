@@ -51,6 +51,7 @@ typedef struct t_noeud
 
 tpn cree_feuille(char val, tpn parent);
 int est_feuille(tpn feuille);
+int est_fg(tpn feuille);
 tpn cree_noeud(tpn parent, char val, tpn fg, tpn fd);
 tpn noeud_fg(tpn noeud);
 tpn noeud_fd(tpn noeud);

@@ -28,7 +28,10 @@
 
 /** @brief Créée une feuille et la renvoie
  *
+ * Créée une feuille, si le parent est non NULL,
+ * alors ce dernier aura ses fils mis à jour.
  * @param val  valeur de l'élément
+ * @param parent le parent de la feuille
  */
 tpn cree_feuille(char val, tpn parent)
 {
@@ -37,6 +40,22 @@ tpn cree_feuille(char val, tpn parent)
     feuille->fg = TPN_NULL;
     feuille->fd = TPN_NULL;
     feuille->parent = parent;
+    if (parent != TPN_NULL)
+    {
+        /* ERREUR, parent à déjà 2fils, ne peux en avoir un
+         * 3ème !!
+         * Arrêter le programme ? Simple printf ? 
+         * Appeler une fonction, stopper prog et détruire arbre */
+        assert((parent->fg != TPN_NULL) && (parent->fd != TPN_NULL));
+        if (parent->fg == TPN_NULL)
+        {
+            parent->fg = feuille;
+        }
+        else
+        {
+            parent->fd = feuille;
+        }
+    }
     return feuille;
 }
 
@@ -53,6 +72,20 @@ int est_feuille(tpn element)
      * gauche et non celui de droite.
      */
     return ((element->fg == TPN_NULL) && (element->fd == TPN_NULL));
+}
+
+/** @brief Retourne vrai si la feuille ou noeud est un fils gauche
+ *
+ * @param elem  l'élément à tester
+ */
+int est_fg(tpn elem)
+{
+    if (elem->parent != TPN_NULL && noeud_fg(elem->parent) == elem)
+    {
+        return 1;
+    }
+    else
+        return 0;
 }
 
 /** @brief Créée un noeud et le renvoi
