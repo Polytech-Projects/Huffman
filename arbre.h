@@ -27,11 +27,12 @@
 #include <limits.h>
 
 #define TPN_NULL (tpn)NULL
+#define FAKE_EOF (SHRT_MAX-1)
+#define UNKNOWN_CHAR (SHRT_MAX-2)
 
 /** @brief Représente un noeud ou feuille de l'arbre
  *
- * Un noeud a au moins un fils qui n'est pas NULL (s'il en qu'un seul,
- * c'est obligatoirement le fils gauche qui est alloué en premier).
+ * Un noeud a obligatoirement deux fils
  * Une feuille est un noeud qui n'a pas de fils (son fils droit et fils
  * gauche sont tous les deux à NULL).
  *
@@ -43,20 +44,21 @@ typedef struct t_noeud
 	struct t_noeud *fg;
 	struct t_noeud *fd;
 	/* Prend une valeur de la table ASCII ou bien celle de
-	 * 'caractère indéfini' -> SHRT_MAX. */
+	 * 'caractère indéfini' -> UNKNOWN_CHAR. */
 	short val;
 	int ord_gal; // Ordre de gallager
 	int poids; // Poids de 'val'
 } t_noeud, *tpn;
 
-tpn cree_feuille(char val, tpn parent);
+tpn cree_feuille(short val, int ordre, int poids);
+tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre);
 int est_feuille(tpn feuille);
 int est_fg(tpn feuille);
-tpn cree_noeud(tpn parent, char val, tpn fg, tpn fd);
 tpn noeud_fg(tpn noeud);
 tpn noeud_fd(tpn noeud);
 char elem_valeur(tpn elem);
 int elem_ordre(tpn elem);
 int elem_poids(tpn elem);
+void permuter(tpn elem1, tpn elem2);
 
 #endif //HUFFMAN_ARBRE_H
