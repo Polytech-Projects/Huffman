@@ -35,3 +35,8 @@ huffman_exe
 
 # IDE stuff
 .idea/
+Debug/
+*.mk
+*.project
+*.workspace
+.codelite/
