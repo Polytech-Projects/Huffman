@@ -28,35 +28,46 @@
 
 /** @brief Créée une feuille et la renvoie
  *
- * Créée une feuille, si le parent est non NULL,
- * alors ce dernier aura ses fils mis à jour.
+ * Créée une feuille, son parent est mis à jour par
+ * ce dernier.
  * @param val  valeur de l'élément
  * @param parent le parent de la feuille
  */
-tpn cree_feuille(char val, tpn parent)
+tpn cree_feuille(short val, int ordre, int poids)
 {
     tpn feuille = (tpn)malloc(sizeof(t_noeud));
     feuille->val = val;
+    feuille->ord_gal = ordre;
+    feuille->poids = poids;
     feuille->fg = TPN_NULL;
     feuille->fd = TPN_NULL;
-    feuille->parent = parent;
-    if (parent != TPN_NULL)
-    {
-        /* ERREUR, parent à déjà 2fils, ne peux en avoir un
-         * 3ème !!
-         * Arrêter le programme ? Simple printf ? 
-         * Appeler une fonction, stopper prog et détruire arbre */
-        assert((parent->fg != TPN_NULL) && (parent->fd != TPN_NULL));
-        if (parent->fg == TPN_NULL)
-        {
-            parent->fg = feuille;
-        }
-        else
-        {
-            parent->fd = feuille;
-        }
-    }
     return feuille;
+}
+
+/** @brief Créée un noeud et le renvoi
+ *
+ * Mets automatiquement les parents des enfants à jour.
+ * @param parent  le parent du noeud
+ * @param fg  le fils gauche du noeud
+ * @param fd  le fils droit du noeud
+ * @param ordre  son ordre de gallager
+ * @param poids  son poids
+ */
+tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre)
+{
+    assert(fg == TPN_NULL && fd == TPN_NULL);
+
+    tpn noeud = (tpn)malloc(sizeof(t_noeud));
+    noeud->parent = parent;
+    noeud->ord_gal = ordre;
+    noeud->fg = fg;
+    noeud->fd = fd;
+    // Mise à jour des parents des feuilles
+    fg->parent = noeud;
+    fd->parent = noeud;
+    // Calcul du poids du noeud
+    noeud->poids = elem_poids(fg) + elem_poids(fd);
+    return noeud;
 }
 
 /** @brief Retourne vrai si le paramètre est une feuille
@@ -67,9 +78,8 @@ tpn cree_feuille(char val, tpn parent)
 int est_feuille(tpn element)
 {
     assert(element != TPN_NULL);
-    /* Normalement seul la feuille gauche est à tester car par définition
-     * un noeud qui n'a qu'un fils a obligatoirement comme fils celui de
-     * gauche et non celui de droite.
+    /* Normalement seul la feuille gauche devrait être à tester car par définition
+     * un noeud a obligatoirement 2 fils, sinon c'est une feuille.
      */
     return ((element->fg == TPN_NULL) && (element->fd == TPN_NULL));
 }
@@ -86,22 +96,6 @@ int est_fg(tpn elem)
     }
     else
         return 0;
-}
-
-/** @brief Créée un noeud et le renvoi
- *
- * @param etiq  l'étiquette du noeud
- * @param fg  le fils gauche du noeud
- * @param fd  le fils droit du noeud
- */
-tpn cree_noeud(tpn parent, char val, tpn fg, tpn fd)
-{
-    tpn noeud = (tpn)malloc(sizeof(t_noeud));
-    noeud->parent = parent;
-    noeud->val = val;
-    noeud->fg = fg;
-    noeud->fd = fd;
-    return noeud;
 }
 
 /** @brief Retourne le fils gauche du noeud
@@ -152,4 +146,19 @@ int elem_poids(tpn elem)
 {
     assert(elem != TPN_NULL);
     return elem->poids;
+}
+
+/** @brief Permute les 2 éléments
+ *
+ * On échange simplement leur parents.
+ * @param elem1  le 1er élément à permuter
+ * @param elem2  le 2ème élément à permuter
+ */
+void permuter(tpn elem1, tpn elem2)
+{
+    assert(elem1 != TPN_NULL && elem2 != TPN_NULL);
+    tpn tmp_parent = elem1->parent;
+
+    elem1->parent = elem2->parent;
+    elem2->parent = tmp_parent;
 }
