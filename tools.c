@@ -43,7 +43,7 @@ void compression(const char *fal, const char *nf)
 	/* Contient l'ordre de gallager ordonné par ordre décroissant.
 	 * Dans l'arbre, la feuille à gauche aura son ordre > à celle de droite.
 	 * Si un ordre n'est pas associé à un feuille, vaut TPN_NULL */
-	tpn ordre_gallager[256] = {TPN_NULL};
+	tpn ordre_gallager[515] = {TPN_NULL};
 	/* Chaque indice correspond a un caractère de la table ASCII et
 	 * contient le pointeur vers la feuille de l'arbre s'il a déjà été
 	 * rencontré, sinon TPN_NULL. */
@@ -77,22 +77,33 @@ void compression(const char *fal, const char *nf)
 	{
 		fseek (pfl, 0, SEEK_END);   // non-portable
 		tailleFichier = ftell(pfl);
-		rewind(pfl); // Important, remettre le curseur en début de fichier
+		rewind(pfl); // Important, remet le curseur en début de fichier
 		printf ("Le fichier contient: %ld caractères.\n", tailleFichier);
 
-		// TRAITEMENT DU 1ER CAS A PART
+		/* Initialisation de l'arbre
+		 * On crée la racine et on lui ajoute le caractère virtuel de fin
+		 * en fils gauche et le caractère inconnu en fils droit. */
+		arbre_huffman = cree_noeud(TPN_NULL, cree_feuille(FAKE_EOF, 1, 1), cree_feuille(UNKNOWN_CHAR, 2, 0), 0);
+		/* On a l'arbre suivant
+		 *          O
+		 *         / \
+		 *        FE UC
+		 * FE: FAKE_EOF, ordre(1), poids(1)
+		 * UC: UNKNOWN_CHAR, ordre(2), poids(0) */
+		ordre_gallager[0] = arbre_huffman;
+		ordre_gallager[1] = noeud_fg(arbre_huffman);
+		ordre_gallager[2] = noeud_fd(arbre_huffman);
 
+		// Lecture du complète du fichier.
 		for (i = 0; i < tailleFichier; i++)
 		{
-			// Lecture du complète du fichier.
-
 			/* getc à la place de fgetc car est parfois implémenté en tant que
 			 * macro, ce qui peut induire un gain de performance. */
 			c = getc(pfl);
 			printf("%c", c);
 
 			// Opérations sur l'arbre d'Huffman
-			tpn code = position_caracteres[c];
+			tpn code = position_caracteres[(int)c];
 
 			// Si le code n'est pas présent dans l'arbre
 			if (code == TPN_NULL)
@@ -103,31 +114,42 @@ void compression(const char *fal, const char *nf)
 				 * grand dans un variable, évite le parcours. */
 				tpn derniere_feuille = TPN_NULL;
 				j = 0;
-				while (derniere_feuille == TPN_NULL && j < 256)
+				while (derniere_feuille == TPN_NULL && j < 515)
 				{
 					if (ordre_gallager[j] == TPN_NULL)
 						derniere_feuille = ordre_gallager[j-1];
 					else
 						j++;
 				}
-				/* Et on ajoute la nouvelle feuille à côté ou en
-				 * dessous de celle-ci. */
-				if (est_fg(derniere_feuille))
+				/* Et on ajoute la nouvelle feuille en créant un
+				 * nouveau noeud.
+				 * Car on sait que la feuille UNKNOWN_CHAR sera toujours
+				 * le fils droit d'un noeud et qu'il faut donc créer un
+				 * nouveau noeud. */
+				tpn noeud = cree_noeud(derniere_feuille->parent, cree_feuille(c, j, 1), derniere_feuille, j);
+				noeud->parent->fd = noeud; // Ne pas oublier de mettre à jour le parent.
+				position_caracteres[(int)c] = noeud_fg(noeud);
+				// Ne pas oublier de mettre à jour l'ordre de Gallager
+				noeud_fd(noeud)->ord_gal++;
+				noeud_fg(noeud)->ord_gal++;
+				ordre_gallager[j] = noeud;
+				ordre_gallager[noeud_fd(noeud)->ord_gal] = noeud_fd(noeud);
+				ordre_gallager[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
+			}
+			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
+			else
+			{
+				tpn carac = position_caracteres[(int)c];
+				/* On parcours l'ordre de Gallager jusqu'à avoir le dernier
+				 * élément de même poids. */
+				int ordre = carac->ord_gal;
+				while (carac->poids == ordre_gallager[ordre-1]->poids && ordre < 0)
 				{
-					// On l'ajoute au fils droit du parent
-					code = cree_feuille(c, derniere_feuille->parent);
-					// Assigner ordre de Gallager et poids
-					code->ordre = elem_ordre(derniere_feuille) + 1;
-					code->poids = 1;
+					ordre--;
 				}
-				else
-				{
-					/* On doit créer un noeud à la place de la dernière
-					 * feuille et la placer dans sont fil gauche et ajouter
-					 * la nouvelle feuille en tant que fils droit. */
-					// Mettre à jour le tout les pointeurs....
-					tpn newNoeud = cree_noeud(derniere_feuille->parent, char val, tpn fg, tpn fd);
-				}
+				// On permute celui trouver avec le caractère actuel
+				permuter(carac, ordre_gallager[ordre]);
+				// TODO: Vérifier la bonne maj des ordres, répéter jusqu'à ce que ordre conservé
 			}
 		}
 		fclose(pfl);
