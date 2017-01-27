@@ -2,7 +2,8 @@ fonction utiles:
 
 -> Trouver la présence d'un caractère dans l'arbre 
 	-paramètres: un caractère.
-	-return : (bool) 1 si il y est, 0 sinon
+	-return : (pointeur) NULL si le caractère n'est pas trouvé, sinon renvoie le pointeur de la
+	feuille qui contient le caractère.
 	-description: parcours l'arbre de Huffman afin d'y trouver (ou non) le caractère
 	mis en paramètre.
 
@@ -17,6 +18,13 @@ fonction utiles:
 	- paramètres: 
 	- return:
 	- description:
+
+-> Incrémenter le poids d'un caractère:
+	- paramètre: feuille qui contient le caractère à incrémenter
+	- return: void
+	- description: incrémente le poids du caractère, puis appelle la fonction qui maintiens
+	l'ordre de Gallager. Ensuite elle appelle la fonction qui met a jour les poids de l'arbre
+	en donnant comme paramètre le même paramètre qu'elle.
 
 -> Mettre à jour les poids de l'arbre
 	- paramètres: noeud qui à subit une modification
