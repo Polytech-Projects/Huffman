@@ -92,7 +92,8 @@ tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre)
     return noeud;
 }
 
-void ajout_feuille(t_arbre *arbre, char c)
+void ajout_feuille(t_arbre *arbre, unsigned char c)
+// TODO: vérifier ordre Gallager
 {
 	/* On parcours l'ordre de Gallager pour obtenir la
 	 * feuille la plus basse dans l'arbre.
@@ -126,14 +127,43 @@ void incrementer_feuille(t_arbre *arbre, tpn feuille)
 {
 	/* On parcours l'ordre de Gallager jusqu'à avoir le dernier
 	 * élément de même poids. */
-	int ordre = carac->ord_gal;
-	while (carac->poids == arbre.ordres[ordre-1]->poids && ordre < 0)
+	int ordre = feuille->ord_gal;
+	while (feuille->poids == arbre->ordres[ordre-1]->poids && ordre < 0)
 	{
 		ordre--;
 	}
 	// On permute celui trouver avec le caractère actuel
-	permuter(carac, arbre.ordres[ordre]);
+	permuter(feuille, arbre->ordres[ordre]);
 	// TODO: Vérifier la bonne maj des ordres, répéter jusqu'à ce que ordre conservé
+}
+
+void maintenir_gallager(t_arbre *arbre)
+{
+	int i = 0;
+	int valid = 1;
+	while (valid && i < 514)
+	{
+		if (arbre->ordres[i]->poids <= arbre->ordres[i+1]->poids)
+			valid = 0;
+		i++;
+	}
+	if (!valid)
+	{
+		i--; // Indice du fautif dans l'ordre
+		tpn fautif = arbre->ordres[i];
+		int trouve = 0;
+		while (i > 0 && !trouve)
+		{
+			if (fautif->poids-1 < arbre->ordres[i]->poids)
+				trouve = 1;
+			i--;
+		}
+		permuter(arbre->ordres[i-1], fautif); // Echange sans maj des poids/ordres
+		// Mettre a jour ordre
+		// Mettre à jour poids parent
+		// Revérifier ordre
+		maintenir_gallager(arbre);
+	}
 }
 
 /** @brief Retourne vrai si le paramètre est une feuille

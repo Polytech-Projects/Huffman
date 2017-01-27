@@ -42,7 +42,7 @@ void compression(const char *fal, const char *nf)
 	// Utilisé pour parcourir le fichier
 	long int i;
 	// caractère actuel
-	char c;
+	unsigned char c;
 	// Contient l'arbre de Gallager, son ordre, etc.
 	t_arbre arbre;
 	// Pointeur sur le fichier à lire.
@@ -69,7 +69,7 @@ void compression(const char *fal, const char *nf)
 		printf ("Le fichier contient: %ld caractères.\n", tailleFichier);
 		
 		// Création de l'arbre de base (racine + feuille EOF et caractère inconnu)
-		init_arbre(&arbre);
+		//init_arbre(&arbre);
 
 		// Lecture du complète du fichier.
 		for (i = 0; i < tailleFichier; i++)
@@ -77,8 +77,7 @@ void compression(const char *fal, const char *nf)
 			/* getc à la place de fgetc car est parfois implémenté en tant que
 			 * macro, ce qui peut induire un gain de performance. */
 			c = getc(pfl);
-			printf("%c", c);
-
+			printf("%u ", c);
 			// Opérations sur l'arbre d'Huffman
 			tpn code = arbre.caracteres[(int)c];
 

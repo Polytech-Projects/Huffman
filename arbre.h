@@ -67,8 +67,9 @@ typedef struct t_arbre {
 void init_arbre(t_arbre *arbre);
 tpn cree_feuille(short val, int ordre, int poids);
 tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre);
-void ajout_feuille(t_arbre *arbre, char c);
+void ajout_feuille(t_arbre *arbre, unsigned char c);
 void incrementer_feuille(t_arbre *arbre, tpn feuille);
+void maintenir_gallager(t_arbre *arbre);
 int est_feuille(tpn feuille);
 int est_fg(tpn feuille);
 tpn noeud_fg(tpn noeud);
