@@ -50,8 +50,24 @@ typedef struct t_noeud
 	int poids; // Poids de 'val'
 } t_noeud, *tpn;
 
+typedef struct t_arbre {
+	/* Contient l'arbre de Huffman, celui-ci doit respecter l'ordre
+	 * de Gallager. */
+	tpn racine;
+	/* Contient l'ordre de gallager ordonné par ordre décroissant.
+	 * Dans l'arbre, la feuille à gauche aura son ordre > à celle de droite.
+	 * Si un ordre n'est pas associé à un feuille, vaut TPN_NULL */
+	tpn ordres[515];
+	/* Chaque indice correspond a un caractère de la table ASCII et
+	 * contient le pointeur vers la feuille de l'arbre s'il a déjà été
+	 * rencontré, sinon TPN_NULL. */
+	tpn caracteres[256];
+} t_arbre;
+
+void init_arbre(t_arbre *arbre);
 tpn cree_feuille(short val, int ordre, int poids);
 tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre);
+void ajout_feuille(t_arbre *arbre, char c);
 int est_feuille(tpn feuille);
 int est_fg(tpn feuille);
 tpn noeud_fg(tpn noeud);

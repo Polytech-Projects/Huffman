@@ -26,6 +26,28 @@
 #include <assert.h>
 #include "arbre.h"
 
+void init_arbre(t_arbre *arbre)
+{
+	int i;
+	for (i = 0; i < 515; i++)
+		arbre->ordres[i] = TPN_NULL;
+	for (i = 0; i < 256; i++)
+		arbre->caracteres[i] = TPN_NULL;
+	/* Initialisation de l'arbre
+	 * On crée la racine et on lui ajoute le caractère virtuel de fin
+	 * en fils gauche et le caractère inconnu en fils droit. */
+	arbre->racine = cree_noeud(TPN_NULL, cree_feuille(FAKE_EOF, 1, 1), cree_feuille(UNKNOWN_CHAR, 2, 0), 0);
+	/* On a l'arbre suivant
+	 *          O
+	 *         / \
+	 *        FE UC
+	 * FE: FAKE_EOF, ordre(1), poids(1)
+	 * UC: UNKNOWN_CHAR, ordre(2), poids(0) */
+	arbre->ordres[0] = arbre->racine;
+	arbre->ordres[1] = noeud_fg(arbre->racine);
+	arbre->ordres[2] = noeud_fd(arbre->racine);
+}
+
 /** @brief Créée une feuille et la renvoie
  *
  * Créée une feuille, son parent est mis à jour par
@@ -68,6 +90,37 @@ tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre)
     // Calcul du poids du noeud
     noeud->poids = elem_poids(fg) + elem_poids(fd);
     return noeud;
+}
+
+void ajout_feuille(t_arbre *arbre, char c)
+{
+	/* On parcours l'ordre de Gallager pour obtenir la
+	 * feuille la plus basse dans l'arbre.
+	 * TODO: optimiser - stocker l'ordre de gallager le plus
+	 * grand dans un variable, évite le parcours. */
+	tpn derniere_feuille = TPN_NULL;
+	int j = 0;
+	while (derniere_feuille == TPN_NULL && j < 515)
+	{
+		if (arbre->ordres[j] == TPN_NULL)
+			derniere_feuille = arbre->ordres[j-1];
+		else
+			j++;
+	}
+	/* Et on ajoute la nouvelle feuille en créant un
+	 * nouveau noeud.
+	 * Car on sait que la feuille UNKNOWN_CHAR sera toujours
+	 * le fils droit d'un noeud et qu'il faut donc créer un
+	 * nouveau noeud. */
+	tpn noeud = cree_noeud(derniere_feuille->parent, cree_feuille(c, j, 1), derniere_feuille, j);
+	noeud->parent->fd = noeud; // Ne pas oublier de mettre à jour le parent.
+	arbre->caracteres[(int)c] = noeud_fg(noeud);
+	// Ne pas oublier de mettre à jour l'ordre de Gallager
+	noeud_fd(noeud)->ord_gal++;
+	noeud_fg(noeud)->ord_gal++;
+	arbre->ordres[j] = noeud;
+	arbre->ordres[noeud_fd(noeud)->ord_gal] = noeud_fd(noeud);
+	arbre->ordres[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
 }
 
 /** @brief Retourne vrai si le paramètre est une feuille
