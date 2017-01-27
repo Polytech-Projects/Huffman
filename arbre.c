@@ -118,7 +118,7 @@ void ajout_feuille(t_arbre *arbre, char c)
 	// Ne pas oublier de mettre à jour l'ordre de Gallager
 	noeud_fd(noeud)->ord_gal++;
 	noeud_fg(noeud)->ord_gal++;
-	arbre->ordres[j] = noeud;
+	arbre->ordres[j-1] = noeud;
 	arbre->ordres[noeud_fd(noeud)->ord_gal] = noeud_fd(noeud);
 	arbre->ordres[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
 }
