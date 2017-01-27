@@ -112,12 +112,11 @@ void ajout_feuille(t_arbre *arbre, char c)
 	 * Car on sait que la feuille UNKNOWN_CHAR sera toujours
 	 * le fils droit d'un noeud et qu'il faut donc créer un
 	 * nouveau noeud. */
-	tpn noeud = cree_noeud(derniere_feuille->parent, cree_feuille(c, j, 1), derniere_feuille, j);
+	tpn noeud = cree_noeud(derniere_feuille->parent, cree_feuille(c, j, 1), derniere_feuille, j-1);
 	noeud->parent->fd = noeud; // Ne pas oublier de mettre à jour le parent.
-	arbre->caracteres[(int)c] = noeud_fg(noeud);
+	arbre->caracteres[(int)c] = noeud_fg(noeud); // Ajout du caractère dans la liste
 	// Ne pas oublier de mettre à jour l'ordre de Gallager
 	noeud_fd(noeud)->ord_gal++;
-	noeud_fg(noeud)->ord_gal++;
 	arbre->ordres[j-1] = noeud;
 	arbre->ordres[noeud_fd(noeud)->ord_gal] = noeud_fd(noeud);
 	arbre->ordres[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
