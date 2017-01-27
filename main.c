@@ -32,7 +32,7 @@
  * d'écart entre eux.) */
 typedef enum e_choice
 {
-	COMPRESS = 1, DECOMPRESS = 2, COMPRESS_MSG = 3, CHOICE_NBR
+	COMPRESS = 1, DECOMPRESS = 2, COMPRESS_MSG = 3, TEST_DEBUG = 4, CHOICE_NBR
 } e_choice;
 #define NOMBRE_DE_CHOIX CHOICE_NBR
 
@@ -55,6 +55,7 @@ int main()
 		printf("\t%d - Compresser un fichier\n", COMPRESS);
 		printf("\t%d - Decompresser un fichier\n", DECOMPRESS);
 		printf("\t%d - Compresser un message (dans un fichier)\n", COMPRESS_MSG);
+		printf("\t%d - Tester la fonction debug\n", TEST_DEBUG);
 		printf("\t0 - Quitter\n");
 		printf("\t\n");
 		printf("\tChoix :");
@@ -71,6 +72,8 @@ int main()
 		case COMPRESS_MSG:
 		break;
 		case DECOMPRESS:
+		break;
+		case TEST_DEBUG:
 		break;
 	}
 

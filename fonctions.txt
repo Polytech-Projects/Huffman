@@ -1,23 +1,31 @@
 fonction utiles:
 
+//fonction useless
 -> Trouver la présence d'un caractère dans l'arbre 
 	-paramètres: un caractère.
 	-return : (pointeur) NULL si le caractère n'est pas trouvé, sinon renvoie le pointeur de la
 	feuille qui contient le caractère.
-	-description: parcours l'arbre de Huffman afin d'y trouver (ou non) le caractère
-	mis en paramètre.
+	-description: le programme possède un tableau de 256 entrées (nombres de caractères ASCII) qui
+	contient les pointeurs vers la feuille qui contient le caractère ASCII correspondant. Si le
+	pointeur est NULL, cela veut dire que le caractère n'est pas présent dans l'arbre. Sinon, il
+	pointe sur la feuille qui contient ce caractère.
+
 
 -> Rajouter un caractère dans le code de sortie
 	-paramètres: caractère
 	-return: void
 	-description: Cette fonction écrit le code du caractère en clair dans le code si 
-	la fonction précédente renvoie 0, remplace par son code binaire d'hoffman si elle 
+	la fonction précédente renvoi NULL, remplace par son code binaire d'hoffman si elle
 	renvoie 1.
+
+
 
 -> Remplacer le caractère inconnu par un noeud avec le nouveau caractère et le caractère inconnu
 	- paramètres: 
 	- return:
 	- description:
+
+
 
 -> Incrémenter le poids d'un caractère:
 	- paramètre: feuille qui contient le caractère à incrémenter
@@ -26,20 +34,28 @@ fonction utiles:
 	l'ordre de Gallager. Ensuite elle appelle la fonction qui met a jour les poids de l'arbre
 	en donnant comme paramètre le même paramètre qu'elle.
 
+
+
 -> Mettre à jour les poids de l'arbre
 	- paramètres: noeud qui à subit une modification
 	- return: void
 	- description: incrémente les poids des noeuds précédant le noeud qui viens d'être modifié
+
+
 
 -> Ajout nouveau caractère dans liste de gallager
 	- paramètres: le nouveau caractère à ajouter
 	- return: void
 	- description: ajout du nouveau caractère dans la liste de gallager et ajout du caractère inconnu.
 
+
+
 -> maintenir l'ordre de Gallager
 	- paramètres: aucun
 	- reuturn: void
-	- description: vérifie que l'ordre de Gallager est toujours conforme.
+	- description:
+	vérifie que l'ordre de Gallager est toujours conforme.
+
 	Si c'est le cas: rien ne ce passe.
 
 	Si ce n'est pas le cas: La fonction corrige corrige la liste de gallager
@@ -47,5 +63,10 @@ fonction utiles:
 	l'intrus, puis met à jour l'arbre avec la permutation effectuée)
 
 
+
 DEBUG:
 
+-> Afficher l'arbre
+	- paramètres: prend l'arbre huffman en paramètre
+	- return: void
+	- description: affiche l'arbre Huffman (ne fonctionne pas si l'arbre à un élément avec un ordre>999)
