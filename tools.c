@@ -90,17 +90,7 @@ void compression(const char *fal, const char *nf)
 			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
 			else
 			{
-				tpn carac = arbre.caracteres[(int)c];
-				/* On parcours l'ordre de Gallager jusqu'à avoir le dernier
-				 * élément de même poids. */
-				int ordre = carac->ord_gal;
-				while (carac->poids == arbre.ordres[ordre-1]->poids && ordre < 0)
-				{
-					ordre--;
-				}
-				// On permute celui trouver avec le caractère actuel
-				permuter(carac, arbre.ordres[ordre]);
-				// TODO: Vérifier la bonne maj des ordres, répéter jusqu'à ce que ordre conservé
+				incrementer_feuille(&arbre, code);
 			}
 		}
 		fclose(pfl);
