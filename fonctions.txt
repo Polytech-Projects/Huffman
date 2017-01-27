@@ -1,0 +1,29 @@
+fonction utiles:
+
+-> Trouver la présence d'un caractère dans l'arbre 
+	-paramètres: un caractère.
+	-return : retour bool
+	-description: parcours l'arbre de Huffman afin d'y trouver (ou non) le caractère
+	mis en paramètre.
+
+-> Rajouter un caractère dans le code de sortie
+	-paramètres: caractère
+	-return: void
+	-description: Cette fonction écrit le code du caractère en clair dans le code si 
+	la fonction précédente renvoie 0, remplace par son code binaire d'hoffman si elle 
+	renvoie 1.
+
+-> Remplacer le caractère inconnu par un noeud avec le nouveau caractère et le caractère inconnu
+	- paramètres: 
+	- return:
+	- description:
+
+-> Mettre à jour les poids de l'arbre
+	- paramètres: noeud qui à subut une modification
+	- return: void
+	- description: incrémente les poids des noeuds précédant le noeud qui viens d'être modifié
+
+-> Ajout nouveau caractère dans liste de gallager
+	- paramètres: le nouveau caractère à ajouter
+	- return: void
+	- description: ajout du nouveau caractère dans la liste de gallager et ajout du caractère inconnu.

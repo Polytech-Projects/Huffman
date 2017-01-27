@@ -1,6 +1,0 @@
-fonction utiles:
-
--> trouver la présence d'un caractère dans l'arbre (fonction avec retour bool)
--> rajouter un caractère de le code de sortie
-	cette fonction écrit le code du caractère en clair dans le code si la fonction précédente renvoie 0, remplace par son code binaire d'hoffman si elle renvoie 1.
--> remplacer le code 
