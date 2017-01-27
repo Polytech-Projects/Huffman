@@ -2,7 +2,7 @@ fonction utiles:
 
 -> Trouver la présence d'un caractère dans l'arbre 
 	-paramètres: un caractère.
-	-return : retour bool
+	-return : (bool) 1 si il y est, 0 sinon
 	-description: parcours l'arbre de Huffman afin d'y trouver (ou non) le caractère
 	mis en paramètre.
 
@@ -19,7 +19,7 @@ fonction utiles:
 	- description:
 
 -> Mettre à jour les poids de l'arbre
-	- paramètres: noeud qui à subut une modification
+	- paramètres: noeud qui à subit une modification
 	- return: void
 	- description: incrémente les poids des noeuds précédant le noeud qui viens d'être modifié
 
@@ -27,3 +27,17 @@ fonction utiles:
 	- paramètres: le nouveau caractère à ajouter
 	- return: void
 	- description: ajout du nouveau caractère dans la liste de gallager et ajout du caractère inconnu.
+
+-> maintenir l'ordre de Gallager
+	- paramètres: aucun
+	- reuturn: void
+	- description: vérifie que l'ordre de Gallager est toujours conforme.
+	Si c'est le cas: rien ne ce passe.
+
+	Si ce n'est pas le cas: La fonction corrige corrige la liste de gallager
+	(la fonction détécte le premier élément qui a le poids inférieur à l'élément intrus, le permute avec 
+	l'intrus, puis met à jour l'arbre avec la permutation effectuée)
+
+
+DEBUG:
+
