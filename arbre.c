@@ -92,6 +92,12 @@ tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre)
     return noeud;
 }
 
+/** @brief Ajout une nouvelle feuille
+ *
+ * Maintient l'ordre de Gallager
+ * @param arbre  l'arbre en question
+ * @param c  le caractère à ajouter
+ */
 void ajout_feuille(t_arbre *arbre, unsigned char c)
 // TODO: vérifier ordre Gallager
 {
@@ -121,8 +127,18 @@ void ajout_feuille(t_arbre *arbre, unsigned char c)
 	arbre->ordres[j-1] = noeud;
 	arbre->ordres[noeud_fd(noeud)->ord_gal] = noeud_fd(noeud);
 	arbre->ordres[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
+	// Mettre à jour le parent
+	maj_noeud(noeud);
+	// Maintenir l'ordre de Galager
+	maintenir_gallager(arbre);
 }
 
+/** @brief Incrémente le poids d'une feuille
+ *
+ * Maintient l'ordre de Gallager
+ * @param arbre  l'arbre en question
+ * @param feuille  la feuille à incrémenter
+ */
 void incrementer_feuille(t_arbre *arbre, tpn feuille)
 {
 	/* On parcours l'ordre de Gallager jusqu'à avoir le dernier
@@ -137,6 +153,11 @@ void incrementer_feuille(t_arbre *arbre, tpn feuille)
 	// TODO: Vérifier la bonne maj des ordres, répéter jusqu'à ce que ordre conservé
 }
 
+/** @brief Met à jour le poids du noeud
+ *
+ * Fonction récursive qui maintient l'ordre de Gallager
+ * @param arbre  l'arbre sur lequel l'ordre doit être maintenu
+ */
 void maintenir_gallager(t_arbre *arbre)
 {
 	int i = 0;
@@ -164,6 +185,15 @@ void maintenir_gallager(t_arbre *arbre)
 		// Revérifier ordre
 		maintenir_gallager(arbre);
 	}
+}
+
+/** @brief Met à jour le poids du noeud
+ *
+ * @param noeud  l'élément à mettre à jour
+ */
+void maj_poids_noeud(tpn noeud)
+{
+	noeud->poids = elem_poids(noeud_fd(noeud)) + elem_poids(noeud_fg(noeud));
 }
 
 /** @brief Retourne vrai si le paramètre est une feuille
