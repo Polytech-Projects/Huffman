@@ -123,6 +123,20 @@ void ajout_feuille(t_arbre *arbre, char c)
 	arbre->ordres[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
 }
 
+void incrementer_feuille(t_arbre *arbre, tpn feuille)
+{
+	/* On parcours l'ordre de Gallager jusqu'à avoir le dernier
+	 * élément de même poids. */
+	int ordre = carac->ord_gal;
+	while (carac->poids == arbre.ordres[ordre-1]->poids && ordre < 0)
+	{
+		ordre--;
+	}
+	// On permute celui trouver avec le caractère actuel
+	permuter(carac, arbre.ordres[ordre]);
+	// TODO: Vérifier la bonne maj des ordres, répéter jusqu'à ce que ordre conservé
+}
+
 /** @brief Retourne vrai si le paramètre est une feuille
  *
  * Une feuille est un noeud qui a ses deux fils à NULL
