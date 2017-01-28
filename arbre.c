@@ -119,7 +119,7 @@ void ajout_feuille(t_arbre *arbre, unsigned char c)
 	 * Car on sait que la feuille UNKNOWN_CHAR sera toujours
 	 * le fils droit d'un noeud et qu'il faut donc créer un
 	 * nouveau noeud. */
-	tpn noeud = cree_noeud(derniere_feuille->parent, cree_feuille(c, j, 1), derniere_feuille, j-1);
+	tpn noeud = cree_noeud(derniere_feuille->parent, cree_feuille((short)c, j, 1), derniere_feuille, j-1);
 	noeud->parent->fd = noeud; // Ne pas oublier de mettre à jour le parent.
 	arbre->caracteres[(int)c] = noeud_fg(noeud); // Ajout du caractère dans la liste
 	// Ne pas oublier de mettre à jour l'ordre de Gallager
@@ -128,9 +128,9 @@ void ajout_feuille(t_arbre *arbre, unsigned char c)
 	arbre->ordres[noeud_fd(noeud)->ord_gal] = noeud_fd(noeud);
 	arbre->ordres[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
 	// Mettre à jour le parent
-	maj_noeud(noeud);
+	maj_poids_noeud(noeud);
 	// Maintenir l'ordre de Galager
-	maintenir_gallager(arbre);
+	maintenir_gallager(arbre, noeud);
 }
 
 /** @brief Incrémente le poids d'une feuille
@@ -141,30 +141,24 @@ void ajout_feuille(t_arbre *arbre, unsigned char c)
  */
 void incrementer_feuille(t_arbre *arbre, tpn feuille)
 {
-	/* On parcours l'ordre de Gallager jusqu'à avoir le dernier
-	 * élément de même poids. */
-	int ordre = feuille->ord_gal;
-	while (feuille->poids == arbre->ordres[ordre-1]->poids && ordre < 0)
-	{
-		ordre--;
-	}
-	// On permute celui trouver avec le caractère actuel
-	permuter(feuille, arbre->ordres[ordre]);
-	// TODO: Vérifier la bonne maj des ordres, répéter jusqu'à ce que ordre conservé
+	feuille->poids++;
+	maintenir_gallager(arbre, feuille);
 }
 
 /** @brief Met à jour le poids du noeud
  *
- * Fonction récursive qui maintient l'ordre de Gallager
+ * Fonction récursive qui maintient l'ordre de Gallager et
+ * met à jour les noeud
  * @param arbre  l'arbre sur lequel l'ordre doit être maintenu
+ * @param noeud  noeud dont on viens de mettre à jour le poids
  */
-void maintenir_gallager(t_arbre *arbre)
+static void maintenir_gallager(t_arbre *arbre, tpn noeud)
 {
 	int i = 0;
 	int valid = 1;
 	while (valid && i < 514)
 	{
-		if (arbre->ordres[i]->poids <= arbre->ordres[i+1]->poids)
+		if (arbre->ordres[i]->poids >= arbre->ordres[i+1]->poids)
 			valid = 0;
 		i++;
 	}
@@ -179,9 +173,9 @@ void maintenir_gallager(t_arbre *arbre)
 				trouve = 1;
 			i--;
 		}
-		permuter(arbre->ordres[i-1], fautif); // Echange sans maj des poids/ordres
-		// Mettre a jour ordre
-		// Mettre à jour poids parent
+		permuter(arbre->ordres[i-1], fautif, arbre); // Echange sans maj des poids
+		// Mettre à jour poids du parents du fautif (inutile pour l'autre, changera pas)
+		maj_poids_noeud(fautif->parent);
 		// Revérifier ordre
 		maintenir_gallager(arbre);
 	}
@@ -276,15 +270,23 @@ int elem_poids(tpn elem)
 
 /** @brief Permute les 2 éléments
  *
- * On échange simplement leur parents.
+ * Echange leur parents, mets à jour leur ordres et le tableau d'ordres.
  * @param elem1  le 1er élément à permuter
  * @param elem2  le 2ème élément à permuter
  */
-void permuter(tpn elem1, tpn elem2)
+void permuter(tpn elem1, tpn elem2, t_arbre *arbre)
 {
     assert(elem1 != TPN_NULL && elem2 != TPN_NULL);
+
     tpn tmp_parent = elem1->parent;
+	int tmp_ordre = elem1->ord_gal;
+
+	arbre->ordres[elem1->ord_gal] = elem2;
+	arbre->ordres[elem2->ord_gal] = elem1;
 
     elem1->parent = elem2->parent;
+	elem1->ord_gal = elem2->ord_gal;
+
     elem2->parent = tmp_parent;
+	elem2->ord_gal = tmp_ordre;
 }

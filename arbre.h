@@ -69,7 +69,7 @@ tpn cree_feuille(short val, int ordre, int poids);
 tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre);
 void ajout_feuille(t_arbre *arbre, unsigned char c);
 void incrementer_feuille(t_arbre *arbre, tpn feuille);
-void maintenir_gallager(t_arbre *arbre);
+void maintenir_gallager(t_arbre *arbre, tpn noeud);
 void maj_poids_noeud(tpn noeud);
 int est_feuille(tpn feuille);
 int est_fg(tpn feuille);
@@ -78,6 +78,6 @@ tpn noeud_fd(tpn noeud);
 char elem_valeur(tpn elem);
 int elem_ordre(tpn elem);
 int elem_poids(tpn elem);
-void permuter(tpn elem1, tpn elem2);
+void permuter(tpn elem1, tpn elem2, t_arbre *arbre);
 
 #endif //HUFFMAN_ARBRE_H
