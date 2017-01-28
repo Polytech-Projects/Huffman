@@ -46,6 +46,7 @@ void init_arbre(t_arbre *arbre)
 	arbre->ordres[0] = arbre->racine;
 	arbre->ordres[1] = noeud_fg(arbre->racine);
 	arbre->ordres[2] = noeud_fd(arbre->racine);
+	arbre->pfi = noeud_fd(arbre->racine);
 }
 
 /** @brief Créée une feuille et la renvoie
@@ -99,36 +100,20 @@ tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre)
  * @param c  le caractère à ajouter
  */
 void ajout_feuille(t_arbre *arbre, unsigned char c)
-// TODO: vérifier ordre Gallager
 {
-	/* On parcours l'ordre de Gallager pour obtenir la
-	 * feuille la plus basse dans l'arbre.
-	 * TODO: optimiser - stocker l'ordre de gallager le plus
-	 * grand dans un variable, évite le parcours. */
-	tpn derniere_feuille = TPN_NULL;
-	int j = 0;
-	while (derniere_feuille == TPN_NULL && j < 515)
-	{
-		if (arbre->ordres[j] == TPN_NULL)
-			derniere_feuille = arbre->ordres[j-1];
-		else
-			j++;
-	}
 	/* Et on ajoute la nouvelle feuille en créant un
 	 * nouveau noeud.
 	 * Car on sait que la feuille UNKNOWN_CHAR sera toujours
 	 * le fils droit d'un noeud et qu'il faut donc créer un
 	 * nouveau noeud. */
-	tpn noeud = cree_noeud(derniere_feuille->parent, cree_feuille((short)c, j, 1), derniere_feuille, j-1);
+	tpn noeud = cree_noeud(arbre->pfi->parent, cree_feuille((short)c, arbre->pfi->ord_gal+1, 1), arbre->pfi, arbre->pfi->ord_gal);
 	noeud->parent->fd = noeud; // Ne pas oublier de mettre à jour le parent.
 	arbre->caracteres[(int)c] = noeud_fg(noeud); // Ajout du caractère dans la liste
 	// Ne pas oublier de mettre à jour l'ordre de Gallager
-	noeud_fd(noeud)->ord_gal++;
-	arbre->ordres[j-1] = noeud;
+	noeud_fd(noeud)->ord_gal += 2;
+	arbre->ordres[noeud->ord_gal] = noeud;
 	arbre->ordres[noeud_fd(noeud)->ord_gal] = noeud_fd(noeud);
 	arbre->ordres[noeud_fg(noeud)->ord_gal] = noeud_fg(noeud);
-	// Mettre à jour le parent
-	maj_poids_noeud(noeud);
 	// Maintenir l'ordre de Galager
 	maintenir_gallager(arbre, noeud);
 }
@@ -142,7 +127,8 @@ void ajout_feuille(t_arbre *arbre, unsigned char c)
 void incrementer_feuille(t_arbre *arbre, tpn feuille)
 {
 	feuille->poids++;
-	maintenir_gallager(arbre, feuille);
+	maj_poids_noeud(feuille->parent)
+	maintenir_gallager(arbre, feuille->parent);
 }
 
 /** @brief Met à jour le poids du noeud
@@ -154,30 +140,23 @@ void incrementer_feuille(t_arbre *arbre, tpn feuille)
  */
 static void maintenir_gallager(t_arbre *arbre, tpn noeud)
 {
-	int i = 0;
+	int i = noeud->ord_gal-1;
 	int valid = 1;
-	while (valid && i < 514)
+	// Test validité de l'ordre
+	while (valid && i > 0)
 	{
-		if (arbre->ordres[i]->poids >= arbre->ordres[i+1]->poids)
+		if (noeud->poids >= arbre->ordres[i])
 			valid = 0;
-		i++;
+		i--;
 	}
 	if (!valid)
 	{
-		i--; // Indice du fautif dans l'ordre
-		tpn fautif = arbre->ordres[i];
-		int trouve = 0;
-		while (i > 0 && !trouve)
-		{
-			if (fautif->poids-1 < arbre->ordres[i]->poids)
-				trouve = 1;
-			i--;
-		}
-		permuter(arbre->ordres[i-1], fautif, arbre); // Echange sans maj des poids
+		tpn echange = arbre->ordres[i+1]; // Reviens sur celui d'avant
+		permuter(noeud, echange, arbre); // Echange sans maj des poids
 		// Mettre à jour poids du parents du fautif (inutile pour l'autre, changera pas)
-		maj_poids_noeud(fautif->parent);
+		maj_poids_noeud(noeud->parent);
 		// Revérifier ordre
-		maintenir_gallager(arbre);
+		maintenir_gallager(arbre, noeud->parent);
 	}
 }
 
@@ -290,3 +269,43 @@ void permuter(tpn elem1, tpn elem2, t_arbre *arbre)
     elem2->parent = tmp_parent;
 	elem2->ord_gal = tmp_ordre;
 }
+
+
+/** @brief calcule le nombre de feuille d'un arbre
+ *
+ * fonction récursive qui renvoie le nombre de feuilles d'un arbre 
+ * @param arbre arbre
+ */
+
+int nb_feuilles(tpn a){
+	if(est_feuille(a)){
+		return 1;
+	} else{
+		return (nb_feuilles(a->fg)+nb_feuilles(a->fd));
+	}
+}
+
+
+/** @brief Calcul et renvoie la profondeur d'un arbre
+ *
+ * fonction récursive qui renvoie la profondeur d'un arbre 
+ * @param arbre arbre sur lequel on veux calculer la profondeur de l'arbre
+ */
+int profondeur(tpn arbre)
+{
+	int b,c;
+	if(est_feuille(a)){
+		return 0;	
+	} else {
+		b=nb_feuilles(a->fg);
+		c=nb_feuilles(a->fd);
+		return (1 + (b<c)?b:c);
+		/* if (b<c){
+			return b;
+		}else{
+			return c;
+		}
+		*/
+	}
+}
+

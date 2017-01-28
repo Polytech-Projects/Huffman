@@ -96,3 +96,29 @@ void compression(const char *fal, const char *nf)
 		fclose(pfe);
 	}
 }
+
+
+/** @brief Affiche l'arbre
+ *
+ * Cette fonction affiche l'arbre ainsi que des informations sur celui-ci
+ * à condition qu'il n'a pas de poids > 999.
+ *
+ * @param arbre prend un pointeur d'arbre en paramètre
+ * TODO: 
+ */
+void debug(tpn arbre)
+{
+	int profondeur;
+
+	system(CLEAR); //netoie le terminal (compatible windows / linux)
+
+	//test pour savoir si un des 2 fils à un ordre > 999.
+	if (arbre->fg->poids > 999 || arbre->fd->poids > 999){
+		printf("arbre non compatible avec la fonction de debug.\n raison: poids d'un des noeuds superieur a 999");
+	}else{
+
+		//test de profondeur
+		profondeur = profondeur(arbre);
+		
+	}
+}

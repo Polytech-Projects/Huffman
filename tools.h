@@ -27,5 +27,6 @@
 #include <stdio.h>
 
 void compression(const char *fal, const char *nf);
+void debug(tpn arbre);
 
 #endif //HUFFMAN_TOOLS_H
