@@ -62,6 +62,8 @@ typedef struct t_arbre {
 	 * contient le pointeur vers la feuille de l'arbre s'il a déjà été
 	 * rencontré, sinon TPN_NULL. */
 	tpn caracteres[256];
+	// Pointeur sur la feuille UNKNOWN_CHAR
+	tpn pfi;
 } t_arbre;
 
 void init_arbre(t_arbre *arbre);
