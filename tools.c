@@ -117,6 +117,35 @@ void verif_tampon(char *nf)
 	}
 }
 
+void ajouter_char_au_tampon(char carac, char *nf)
+{
+	int i;
+	char tmp;
+
+	i=0;
+	carac = tmp;
+
+	for(i; i<8; i++)
+	{
+		tmp = tmp >> 1;
+		tmp = tmp << 1;
+		if (tmp|carac == 1)
+		{
+			tampon = tampon << 1;
+			tampon = tampon|1;
+			compteur_tampon++;
+		}
+		if (tmp|carac == 0)
+		{
+			tampon = tampon << 1;
+			compteur_tampon++;
+		}
+		verif_tampon();
+
+	}
+
+}
+
 //ajoute au tampon le code d'un caractère
 void ajouter_au_tampon(tpn arbre, char *nf)
 {
@@ -152,12 +181,12 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 		assert(chemin[taille_tab]==0 || chemin[taille_tab]==1);
 		if(chemin[taille_tab]=0)
 		{
-			tampon << 1;
+			tampon = tampon << 1;
 			compteur_tampon++;
 			verif_tampon();
 		}else if(chemin[taille_tab]=1)
 		{
-			tampon << 1;
+			tampon = tampon << 1;
 			compteur = compteur | 1;
 			compteur_tampon++;
 			verif_tampon();
