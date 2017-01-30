@@ -9,7 +9,7 @@ arbre.o: arbre.h arbre.c
 	 $(CC) $(CCFLAGS) -c arbre.c
 tools.o: tools.h tools.c
 	 $(CC) $(CFLAGS) -c tools.c
-main.o:  main.c
+main.o:  main.h main.c
 	 $(CC) $(CFlAGS) -c main.c
 clean:
 	 rm *.o huffman_exe

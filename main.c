@@ -23,21 +23,49 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "main.h"
 #include "constants.h"
 #include "tools.h"
 
-/* Les différents choix pour le menu.
- * Attention, les nombres associé aux choix doivent être positif et
- * doivent se suivre (on peut changer leur ordre mais pas mettre
- * d'écart entre eux.) */
-typedef enum e_choice
+int main(int argc, char* argv[])
 {
-	COMPRESS = 1, DECOMPRESS = 2, COMPRESS_MSG = 3, TEST_DEBUG = 4, CHOICE_NBR
-} e_choice;
-#define NOMBRE_DE_CHOIX CHOICE_NBR
+	int i;
+	// Si il y a des arguments
+	if (argc > 1)
+	{
+		for (i = 1; i < argc; i++)
+		{
+			// Déclaré aussi comme ca se réset tout seul
+			char nom_compresse[256] = {'\0'};
+			if (fichier_existe(argv[i]))
+			{
+				// Si nom assez court
+				if (strlen(argv[i])+1 < 256-6)
+				{
+					strcpy(nom_compresse, argv[i]);
+					strcat(nom_compresse, ".huff");
+				}
+				// Sinon on coupe le nom
+				else
+				{
+					strncpy(nom_compresse, argv[i], 256-6);
+					strcat(nom_compresse, ".huff");
+				}
+				compression(argv[i], "");
+			}
+		}
+	}
+	else
+	{
+		print_menu();
+	}
 
+	printf("\n");
+	return EXIT_SUCCESS;
+}
 
-int main()
+void print_menu()
 {
 	int choix;
 
@@ -61,7 +89,7 @@ int main()
 		printf("\tChoix :");
 		scanf("%d", &choix);
 	}
-	while (!(choix >= 0 && choix < NOMBRE_DE_CHOIX));
+	while (!(choix >= 0 && choix < CHOICE_NBR));
 	system(CLEAR);
 
 	switch (choix)
@@ -75,9 +103,7 @@ int main()
 		break;
 		case TEST_DEBUG:
 		break;
+		default:
+		break;
 	}
-
-	printf("\n");
-	return EXIT_SUCCESS;
 }
-

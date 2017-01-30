@@ -47,7 +47,7 @@ void compression(const char *fal, const char *nf)
 	// Contient l'arbre de Gallager, son ordre, etc.
 	t_arbre arbre;
 	// Pointeur sur le fichier à lire.
-	FILE *pfl = fopen (fal, "r");
+	FILE *pfl = fopen(fal, "r");
 	FILE *pfe = fopen(nf, "w");
 
 	// Test de l'ouverture du fichier
@@ -98,6 +98,17 @@ void compression(const char *fal, const char *nf)
 	}
 }
 
+/** @brief Retourne 1 si le fichier existe
+ *
+ * @param nom  le chemin complet vers le fichier
+ */
+int fichier_existe(const char * const nom)
+{
+	FILE* file = fopen(nom, "r");
+	int existe = file != NULL ? 1 : 0;
+	if (file != NULL) fclose(file);
+	return existe;
+}
 //initialise le tampon à zéro
 void init_tampon()
 {
