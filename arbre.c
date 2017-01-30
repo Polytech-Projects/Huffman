@@ -127,7 +127,7 @@ void ajout_feuille(t_arbre *arbre, unsigned char c)
 void incrementer_feuille(t_arbre *arbre, tpn feuille)
 {
 	feuille->poids++;
-	maj_poids_noeud(feuille->parent)
+	maj_poids_noeud(feuille->parent);
 	maintenir_gallager(arbre, feuille->parent);
 }
 
@@ -138,14 +138,14 @@ void incrementer_feuille(t_arbre *arbre, tpn feuille)
  * @param arbre  l'arbre sur lequel l'ordre doit être maintenu
  * @param noeud  noeud dont on viens de mettre à jour le poids
  */
-static void maintenir_gallager(t_arbre *arbre, tpn noeud)
+void maintenir_gallager(t_arbre *arbre, tpn noeud)
 {
 	int i = noeud->ord_gal-1;
 	int valid = 1;
 	// Test validité de l'ordre
 	while (valid && i > 0)
 	{
-		if (noeud->poids >= arbre->ordres[i])
+		if (noeud->poids >= arbre->ordres[i]->poids)
 			valid = 0;
 		i--;
 	}
