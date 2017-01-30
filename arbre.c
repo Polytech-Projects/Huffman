@@ -269,3 +269,43 @@ void permuter(tpn elem1, tpn elem2, t_arbre *arbre)
     elem2->parent = tmp_parent;
 	elem2->ord_gal = tmp_ordre;
 }
+
+
+/** @brief calcule le nombre de feuille d'un arbre
+ *
+ * fonction récursive qui renvoie le nombre de feuilles d'un arbre 
+ * @param arbre arbre
+ */
+
+int nb_feuilles(tpn a){
+	if(est_feuille(a)){
+		return 1;
+	} else{
+		return (nb_feuilles(a->fg)+nb_feuilles(a->fd));
+	}
+}
+
+
+/** @brief Calcul et renvoie la profondeur d'un arbre
+ *
+ * fonction récursive qui renvoie la profondeur d'un arbre 
+ * @param arbre arbre sur lequel on veux calculer la profondeur de l'arbre
+ */
+int profondeur(tpn arbre)
+{
+	int b,c;
+	if(est_feuille(arbre)){
+		return 0;	
+	} else {
+		b=nb_feuilles(arbre->fg);
+		c=nb_feuilles(arbre->fd);
+		return (1 + (b<c)?b:c);
+		/* if (b<c){
+			return b;
+		}else{
+			return c;
+		}
+		*/
+	}
+}
+
