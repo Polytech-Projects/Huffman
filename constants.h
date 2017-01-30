@@ -16,8 +16,7 @@
 
 
 /**
- * @file constants.c
- * @brief Regroupe les fonctions utilitaires
+ * @file constants.h
  *
  */
 
