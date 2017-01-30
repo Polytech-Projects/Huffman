@@ -121,7 +121,7 @@ void verif_tampon(char *nf)
 {
 	if(compteur_tampon == 8){
 		printf("DEBUG: le tampon est plein ! vidage du tampon dans le fichier de sortie ...\n");
-		FILE fp;
+		FILE* fp;
 		fp = fopen(nf, "w");
 		putc(tampon, fp);
 		init_tampon();
@@ -151,7 +151,7 @@ void ajouter_char_au_tampon(char carac, char *nf)
 			tampon = tampon << 1;
 			compteur_tampon++;
 		}
-		verif_tampon();
+		verif_tampon(nf);
 
 	}
 
@@ -186,6 +186,7 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 	//boucle qui écrit dans le tampon le chemin dans l'ordre
 	//car on écrit le chemin de la racine vers la feuille.
 	//cependant il a été récupéré de la feuille à la racine.
+	int compteur = 0; // ATTENTION JE SAIS PAS SI C BON
 	while(taille_tab!=0)
 	{
 		taille_tab--;
@@ -194,13 +195,13 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 		{
 			tampon = tampon << 1;
 			compteur_tampon++;
-			verif_tampon();
+			verif_tampon(nf);
 		}else if(chemin[taille_tab]=1)
 		{
 			tampon = tampon << 1;
 			compteur = compteur | 1;
 			compteur_tampon++;
-			verif_tampon();
+			verif_tampon(nf);
 		}
 	}
 
@@ -215,7 +216,7 @@ void clear_tampon(char *nf)
 	printf("DEBUG: ajout de bits de bourrage au tampon et vidage du tampon dans le fichier de sortie\n");
 	tampon = tampon << (8 - compteur_tampon);
 	compteur_tampon = 8;
-	verif_tampon();
+	verif_tampon(nf);
 }
 
 
@@ -261,4 +262,4 @@ void debug(tpn arbre)
 		
 	}
 }
-/*
+*/
