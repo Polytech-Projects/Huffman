@@ -294,11 +294,11 @@ int nb_feuilles(tpn a){
 int profondeur(tpn arbre)
 {
 	int b,c;
-	if(est_feuille(a)){
+	if(est_feuille(arbre)){
 		return 0;	
 	} else {
-		b=nb_feuilles(a->fg);
-		c=nb_feuilles(a->fd);
+		b=nb_feuilles(arbre->fg);
+		c=nb_feuilles(arbre->fd);
 		return (1 + (b<c)?b:c);
 		/* if (b<c){
 			return b;

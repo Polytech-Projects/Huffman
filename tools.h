@@ -25,8 +25,17 @@
 #define HUFFMAN_TOOLS_H
 
 #include <stdio.h>
+#include "arbre.h"
+
+char tampon;
+int compteur_tampon;
 
 void compression(const char *fal, const char *nf);
-void debug(tpn arbre);
+void init_tampon();
+void verif_tampon(char *nf);
+void ajouter_au_tampon(tpn arbre, char *nf);
+void clear_tampon(char *nf);
+
+//void debug(tpn arbre);
 
 #endif //HUFFMAN_TOOLS_H

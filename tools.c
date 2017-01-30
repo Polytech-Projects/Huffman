@@ -24,6 +24,7 @@
 
 #include "tools.h"
 #include "arbre.h"
+#include <assert.h>
 
 /** @brief Compresse le fichier vers un autre
  *
@@ -97,6 +98,86 @@ void compression(const char *fal, const char *nf)
 	}
 }
 
+//initialise le tampon à zéro
+void init_tampon()
+{
+	tampon = 0;
+	compteur_tampon = 0;
+}
+
+//vérifie si le tampon n'est pas plein, l'ajoute au fichier si c'est le cas
+void verif_tampon(char *nf)
+{
+	if(compteur_tampon == 8){
+		printf("DEBUG: le tampon est plein ! vidage du tampon dans le fichier de sortie ...\n");
+		FILE fp;
+		fp = fopen(nf, "w");
+		putc(tampon, fp);
+		init_tampon();
+	}
+}
+
+//ajoute au tampon le code d'un caractère
+void ajouter_au_tampon(tpn arbre, char *nf)
+{
+	tpn tmp;
+	int chemin[512];
+	int taille_tab = 0;
+
+	//on récupère le chemin binaire en partant de la feuille
+	//et en remontant jusqu'a la racine.
+	while (arbre->parent!=NULL)
+	{
+		tmp = arbre;
+		arbre = arbre->parent;
+		if (arbre->fg = tmp)
+		{
+			chemin[taille_tab]=0;
+			taille_tab++;
+		} 
+		else if(arbre->fd = tmp)
+		{
+			chemin[taille_tab]=1;
+			taille_tab++;
+		}
+	}
+	taille_tab++;
+
+	//boucle qui écrit dans le tampon le chemin dans l'ordre
+	//car on écrit le chemin de la racine vers la feuille.
+	//cependant il a été récupéré de la feuille à la racine.
+	while(taille_tab!=0)
+	{
+		taille_tab--;
+		assert(chemin[taille_tab]==0 || chemin[taille_tab]==1);
+		if(chemin[taille_tab]=0)
+		{
+			tampon << 1;
+			compteur_tampon++;
+			verif_tampon();
+		}else if(chemin[taille_tab]=1)
+		{
+			tampon << 1;
+			compteur = compteur | 1;
+			compteur_tampon++;
+			verif_tampon();
+		}
+	}
+
+
+}
+
+
+//fonction qui vide le tampon actuel dans le fichier en paramètre.
+//si le tampon n'est pas plein, elle rajoute des bits de bourrage
+void clear_tampon(char *nf)
+{
+	printf("DEBUG: ajout de bits de bourrage au tampon et vidage du tampon dans le fichier de sortie\n");
+	tampon = tampon << (8 - compteur_tampon);
+	compteur_tampon = 8;
+	verif_tampon();
+}
+
 
 /** @brief Affiche l'arbre
  *
@@ -106,19 +187,38 @@ void compression(const char *fal, const char *nf)
  * @param arbre prend un pointeur d'arbre en paramètre
  * TODO: 
  */
+
+/* FONCTION MISE DE COTE
 void debug(tpn arbre)
 {
 	int profondeur;
 
 	system(CLEAR); //netoie le terminal (compatible windows / linux)
+	printf("\t-------------------------\n");
+	printf("\t|     DEBUG    ARBRE    |\n");
+	printf("\t-------------------------\n\n");
 
 	//test pour savoir si un des 2 fils à un ordre > 999.
 	if (arbre->fg->poids > 999 || arbre->fd->poids > 999){
-		printf("arbre non compatible avec la fonction de debug.\n raison: poids d'un des noeuds superieur a 999");
+		printf("Arbre non compatible avec la fonction de debug.\n raison: poids d'un des noeuds superieur a 999");
 	}else{
+		if (arbre!=NULL){
+			//test de profondeur
+			profondeur = profondeur(arbre);
 
-		//test de profondeur
-		profondeur = profondeur(arbre);
+			printf("Profondeur de l'arbre: %d \n\n", profondeur);
+
+			int i=1;
+			for (i=1; i<=profondeur; i++)
+			{
+				printf("\n");
+			}	
+		} else {
+			printf("Arbre vide\n");
+		}
+		
+
 		
 	}
 }
+/*
