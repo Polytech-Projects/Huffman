@@ -27,5 +27,6 @@
 #include <stdio.h>
 
 void compression(const char *fal, const char *nf);
+int fichier_existe(const char * const nom);
 
 #endif //HUFFMAN_TOOLS_H
