@@ -153,6 +153,9 @@ void ajouter_char_au_tampon(char carac, char *nf)
 		}
 		verif_tampon(nf);
 
+		carac = carac << 1;
+		tmp = tmp << 1;
+
 	}
 
 }
@@ -186,7 +189,6 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 	//boucle qui écrit dans le tampon le chemin dans l'ordre
 	//car on écrit le chemin de la racine vers la feuille.
 	//cependant il a été récupéré de la feuille à la racine.
-	int compteur = 0; // ATTENTION JE SAIS PAS SI C BON
 	while(taille_tab!=0)
 	{
 		taille_tab--;
@@ -199,7 +201,7 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 		}else if(chemin[taille_tab]=1)
 		{
 			tampon = tampon << 1;
-			compteur = compteur | 1;
+			tampon = tampon | 1;
 			compteur_tampon++;
 			verif_tampon(nf);
 		}
