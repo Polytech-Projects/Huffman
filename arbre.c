@@ -326,3 +326,19 @@ int profondeur(tpn arbre)
 	}
 }
 
+/** @brief Libère la mémoire occupée par l'arbre.
+ *
+ * Libère la mémoire occupée par l'arbre à l'aide d'une méthode
+ * récursive et un parcours infixe.
+ * @param arbre arbre sur lequel on veux calculer la profondeur de l'arbre
+ */
+void free_arbre(tpn arbre)
+{
+	if(arbre->fg!=NULL && arbre->fd!=NULL)
+	{
+		free_arbre(arbre->fg);
+		free_arbre(arbre->fd);
+	} else{
+		free(arbre);
+	}
+}

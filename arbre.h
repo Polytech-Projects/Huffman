@@ -84,5 +84,6 @@ void permuter(tpn elem1, tpn elem2, t_arbre *arbre);
 void liberer_arbre(tpn arbre);
 int nb_feuilles(tpn a);
 int profondeur(tpn arbre);
+void free_arbre(tpn arbre);
 
 #endif //HUFFMAN_ARBRE_H
