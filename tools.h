@@ -33,10 +33,10 @@ int compteur_tampon;
 void compression(const char *fal, const char *nf);
 int fichier_existe(const char * const nom);
 void init_tampon();
-void verif_tampon(char *nf);
-void ajouter_char_au_tampon(char carac, char *nf);
-void ajouter_au_tampon(tpn arbre, char *nf);
-void clear_tampon(char *nf);
+void verif_tampon(FILE *nf);
+void ajouter_char_au_tampon(char carac, FILE *nf);
+void ajouter_au_tampon(tpn arbre, FILE *nf);
+void clear_tampon(FILE *nf);
 
 //void debug(tpn arbre);
 

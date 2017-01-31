@@ -70,7 +70,7 @@ void compression(const char *fal, const char *nf)
 		printf ("Le fichier contient: %ld caractères.\n", tailleFichier);
 		
 		// Création de l'arbre de base (racine + feuille EOF et caractère inconnu)
-		//init_arbre(&arbre);
+		init_arbre(&arbre);
 
 		// Lecture du complète du fichier.
 		for (i = 0; i < tailleFichier; i++)
@@ -117,18 +117,16 @@ void init_tampon()
 }
 
 //vérifie si le tampon n'est pas plein, l'ajoute au fichier si c'est le cas
-void verif_tampon(char *nf)
+void verif_tampon(FILE *nf)
 {
 	if(compteur_tampon == 8){
 		printf("DEBUG: le tampon est plein ! vidage du tampon dans le fichier de sortie ...\n");
-		FILE* fp;
-		fp = fopen(nf, "w");
-		putc(tampon, fp);
+		putc(tampon, nf);
 		init_tampon();
 	}
 }
 
-void ajouter_char_au_tampon(char carac, char *nf)
+void ajouter_char_au_tampon(char carac, FILE *nf)
 {
 	int i;
 	// Tmp valait n'importe quoi.
@@ -163,7 +161,7 @@ void ajouter_char_au_tampon(char carac, char *nf)
 }
 
 //ajoute au tampon le code d'un caractère
-void ajouter_au_tampon(tpn arbre, char *nf)
+void ajouter_au_tampon(tpn arbre, FILE *nf)
 {
 	tpn tmp;
 	int chemin[512];
@@ -215,7 +213,7 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 
 //fonction qui vide le tampon actuel dans le fichier en paramètre.
 //si le tampon n'est pas plein, elle rajoute des bits de bourrage
-void clear_tampon(char *nf)
+void clear_tampon(FILE *nf)
 {
 	printf("DEBUG: ajout de bits de bourrage au tampon et vidage du tampon dans le fichier de sortie\n");
 	tampon = tampon << (8 - compteur_tampon);
