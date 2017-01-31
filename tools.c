@@ -26,6 +26,11 @@
 #include "arbre.h"
 #include <assert.h>
 
+/* Déclaration dans le .c en static car on en veut pas que ces variables
+ * soient visibles ailleurs que dans ce fichier. */
+static char glb_stat_tampon;
+static int gbl_stat_compteur_tampon;
+
 /** @brief Compresse le fichier vers un autre
  *
  * Le fichier va être compression via l'algorithme de Huffman adaptatif.
@@ -71,6 +76,9 @@ void compression(const char *fal, const char *nf)
 		
 		// Création de l'arbre de base (racine + feuille EOF et caractère inconnu)
 		init_arbre(&arbre);
+		/* On s'assure que les glb_stat_tampon soient réinitialisé (cas de plusieurs
+		 * compression effectué d'affilé. */
+		init_tampon();
 
 		// Lecture du complète du fichier.
 		for (i = 0; i < tailleFichier; i++)
@@ -109,23 +117,34 @@ int fichier_existe(const char * const nom)
 	if (file != NULL) fclose(file);
 	return existe;
 }
-//initialise le tampon à zéro
+
+/** @brief Initialise les variables global static
+ *
+ */
 void init_tampon()
 {
-	tampon = 0;
-	compteur_tampon = 0;
+	glb_stat_tampon = 0;
+	gbl_stat_compteur_tampon = 0;
 }
 
-//vérifie si le tampon n'est pas plein, l'ajoute au fichier si c'est le cas
+/** @brief Ecrit le tampon s'il est plein
+ *
+ * @param nf  pointeur du fichier où l'on écrit le tampon
+ */
 void verif_tampon(FILE *nf)
 {
-	if(compteur_tampon == 8){
-		printf("DEBUG: le tampon est plein ! vidage du tampon dans le fichier de sortie ...\n");
-		putc(tampon, nf);
+	if(gbl_stat_compteur_tampon == 8){
+		printf("DEBUG: le glb_stat_tampon est plein ! vidage du glb_stat_tampon dans le fichier de sortie ...\n");
+		putc(glb_stat_tampon, nf);
 		init_tampon();
 	}
 }
 
+/** @brief Ajoute une lettre (char) au tampon
+ *
+ * @param carac  le caractère à mettre dans le tampon
+ * @param nf  pointeur du fichier où l'on écrit le tampon
+ */
 void ajouter_char_au_tampon(char carac, FILE *nf)
 {
 	int i;
@@ -142,14 +161,14 @@ void ajouter_char_au_tampon(char carac, FILE *nf)
 		tmp = tmp << 1;
 		if ((tmp|carac) == 1)
 		{
-			tampon = tampon << 1;
-			tampon = tampon|1;
-			compteur_tampon++;
+			glb_stat_tampon = glb_stat_tampon << 1;
+			glb_stat_tampon = glb_stat_tampon|1;
+			gbl_stat_compteur_tampon++;
 		}
 		if ((tmp|carac) == 0)
 		{
-			tampon = tampon << 1;
-			compteur_tampon++;
+			glb_stat_tampon = glb_stat_tampon << 1;
+			gbl_stat_compteur_tampon++;
 		}
 		verif_tampon(nf);
 
@@ -160,7 +179,15 @@ void ajouter_char_au_tampon(char carac, FILE *nf)
 
 }
 
-//ajoute au tampon le code d'un caractère
+/** @brief Ajoute au tampon la séquence binaire d'une lettre
+ *
+ * Ecrit la séquence binaire correspondant à la lettre
+ * dans le tampon.
+ *
+ * @param carac  le caractère à mettre dans le tampon
+ * @param nf  pointeur du fichier où l'on écrit le tampon
+ * TODO: Reprendre la fonction
+ */
 void ajouter_au_tampon(tpn arbre, FILE *nf)
 {
 	tpn tmp;
@@ -186,7 +213,7 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 	}
 	taille_tab++;
 
-	//boucle qui écrit dans le tampon le chemin dans l'ordre
+	//boucle qui écrit dans le glb_stat_tampon le chemin dans l'ordre
 	//car on écrit le chemin de la racine vers la feuille.
 	//cependant il a été récupéré de la feuille à la racine.
 	while(taille_tab!=0)
@@ -195,14 +222,14 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 		assert(chemin[taille_tab]==0 || chemin[taille_tab]==1);
 		if(chemin[taille_tab] == 0)
 		{
-			tampon = tampon << 1;
-			compteur_tampon++;
+			glb_stat_tampon = glb_stat_tampon << 1;
+			gbl_stat_compteur_tampon++;
 			verif_tampon(nf);
 		}else if(chemin[taille_tab] == 1)
 		{
-			tampon = tampon << 1;
-			tampon = tampon | 1;
-			compteur_tampon++;
+			glb_stat_tampon = glb_stat_tampon << 1;
+			glb_stat_tampon = glb_stat_tampon | 1;
+			gbl_stat_compteur_tampon++;
 			verif_tampon(nf);
 		}
 	}
@@ -210,14 +237,15 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 
 }
 
-
-//fonction qui vide le tampon actuel dans le fichier en paramètre.
-//si le tampon n'est pas plein, elle rajoute des bits de bourrage
+/** @brief Vide le tampon en rajoutant du bourrage si besoin
+ *
+ * @param nf  pointeur du fichier où l'on écrit le tampon
+ */
 void clear_tampon(FILE *nf)
 {
-	printf("DEBUG: ajout de bits de bourrage au tampon et vidage du tampon dans le fichier de sortie\n");
-	tampon = tampon << (8 - compteur_tampon);
-	compteur_tampon = 8;
+	printf("DEBUG: ajout de bits de bourrage au glb_stat_tampon et vidage du glb_stat_tampon dans le fichier de sortie\n");
+	glb_stat_tampon = glb_stat_tampon << (8 - gbl_stat_compteur_tampon);
+	gbl_stat_compteur_tampon = 8;
 	verif_tampon(nf);
 }
 

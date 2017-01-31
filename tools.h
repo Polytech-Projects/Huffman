@@ -27,9 +27,6 @@
 #include <stdio.h>
 #include "arbre.h"
 
-char tampon;
-int compteur_tampon;
-
 void compression(const char *fal, const char *nf);
 int fichier_existe(const char * const nom);
 void init_tampon();
