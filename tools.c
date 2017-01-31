@@ -131,22 +131,24 @@ void verif_tampon(char *nf)
 void ajouter_char_au_tampon(char carac, char *nf)
 {
 	int i;
-	char tmp;
+	// Tmp valait n'importe quoi.
+	char tmp = 0;
 
-	i=0;
+	// C'est pas l'inverse ?
 	carac = tmp;
 
-	for(i; i<8; i++)
+	// Le i peut s'initialiser ici
+	for(i=0; i<8; i++)
 	{
 		tmp = tmp >> 1;
 		tmp = tmp << 1;
-		if (tmp|carac == 1)
+		if ((tmp|carac) == 1)
 		{
 			tampon = tampon << 1;
 			tampon = tampon|1;
 			compteur_tampon++;
 		}
-		if (tmp|carac == 0)
+		if ((tmp|carac) == 0)
 		{
 			tampon = tampon << 1;
 			compteur_tampon++;
@@ -173,12 +175,12 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 	{
 		tmp = arbre;
 		arbre = arbre->parent;
-		if (arbre->fg = tmp)
+		if (arbre->fg == tmp)
 		{
 			chemin[taille_tab]=0;
 			taille_tab++;
 		} 
-		else if(arbre->fd = tmp)
+		else if(arbre->fd == tmp)
 		{
 			chemin[taille_tab]=1;
 			taille_tab++;
@@ -193,12 +195,12 @@ void ajouter_au_tampon(tpn arbre, char *nf)
 	{
 		taille_tab--;
 		assert(chemin[taille_tab]==0 || chemin[taille_tab]==1);
-		if(chemin[taille_tab]=0)
+		if(chemin[taille_tab] == 0)
 		{
 			tampon = tampon << 1;
 			compteur_tampon++;
 			verif_tampon(nf);
-		}else if(chemin[taille_tab]=1)
+		}else if(chemin[taille_tab] == 1)
 		{
 			tampon = tampon << 1;
 			tampon = tampon | 1;
