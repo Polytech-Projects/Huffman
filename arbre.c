@@ -274,7 +274,7 @@ void permuter(tpn elem1, tpn elem2, t_arbre *arbre)
  *
  * @param racine  pointeur sur la racine de l'arbre à libérer
  */
-void liberer_arbre(tpn *racine)
+void liberer_arbre(tpn racine)
 {
 	if (est_feuille(racine))
 	{
