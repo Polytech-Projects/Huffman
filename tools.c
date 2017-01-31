@@ -127,12 +127,18 @@ void init_tampon()
 	gbl_stat_compteur_tampon = 0;
 }
 
-/** @brief Ecrit le tampon s'il est plein
+/** @brief Ajoute le bit en paramètre au tampon puis verifie si le tampon est plein.
  *
+ * @param bit Valeur du bit à ajouter (doit être 0 ou 1)
  * @param nf  pointeur du fichier où l'on écrit le tampon
  */
-void verif_tampon(FILE *nf)
+void ajouter_bit_tampon(int bit, FILE *nf)
 {
+	assert(bit == 1 || bit == 0);
+	glb_stat_tampon = glb_stat_tampon << 1;
+	glb_stat_tampon = glb_stat_tampon | bit;
+	gbl_stat_compteur_tampon++;
+
 	if(gbl_stat_compteur_tampon == 8){
 		printf("DEBUG: le glb_stat_tampon est plein ! vidage du glb_stat_tampon dans le fichier de sortie ...\n");
 		putc(glb_stat_tampon, nf);
@@ -159,18 +165,7 @@ void ajouter_char_au_tampon(char carac, FILE *nf)
 	{
 		tmp = tmp >> 1;
 		tmp = tmp << 1;
-		if ((tmp|carac) == 1)
-		{
-			glb_stat_tampon = glb_stat_tampon << 1;
-			glb_stat_tampon = glb_stat_tampon|1;
-			gbl_stat_compteur_tampon++;
-		}
-		if ((tmp|carac) == 0)
-		{
-			glb_stat_tampon = glb_stat_tampon << 1;
-			gbl_stat_compteur_tampon++;
-		}
-		verif_tampon(nf);
+		ajouter_bit_tampon(tmp|carac, nf);
 
 		carac = carac << 1;
 		tmp = tmp << 1;
@@ -219,19 +214,7 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 	while(taille_tab!=0)
 	{
 		taille_tab--;
-		assert(chemin[taille_tab]==0 || chemin[taille_tab]==1);
-		if(chemin[taille_tab] == 0)
-		{
-			glb_stat_tampon = glb_stat_tampon << 1;
-			gbl_stat_compteur_tampon++;
-			verif_tampon(nf);
-		}else if(chemin[taille_tab] == 1)
-		{
-			glb_stat_tampon = glb_stat_tampon << 1;
-			glb_stat_tampon = glb_stat_tampon | 1;
-			gbl_stat_compteur_tampon++;
-			verif_tampon(nf);
-		}
+		ajouter_bit_tampon(chemin[taille_tab], nf);
 	}
 
 
@@ -246,7 +229,8 @@ void clear_tampon(FILE *nf)
 	printf("DEBUG: ajout de bits de bourrage au glb_stat_tampon et vidage du glb_stat_tampon dans le fichier de sortie\n");
 	glb_stat_tampon = glb_stat_tampon << (8 - gbl_stat_compteur_tampon);
 	gbl_stat_compteur_tampon = 8;
-	verif_tampon(nf);
+	putc(glb_stat_tampon, nf);
+	init_tampon();
 }
 
 
