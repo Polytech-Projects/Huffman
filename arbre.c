@@ -270,6 +270,23 @@ void permuter(tpn elem1, tpn elem2, t_arbre *arbre)
 	elem2->ord_gal = tmp_ordre;
 }
 
+/** @brief Libère toute la mémoire réservé pour l'arbre
+ *
+ * @param racine  pointeur sur la racine de l'arbre à libérer
+ */
+void liberer_arbre(tpn *racine)
+{
+	if (est_feuille(racine))
+	{
+		free(racine);
+	}
+	else
+	{
+		liberer_arbre(racine->fg);
+		liberer_arbre(racine->fd);
+		free(racine);
+	}
+}
 
 /** @brief calcule le nombre de feuille d'un arbre
  *
