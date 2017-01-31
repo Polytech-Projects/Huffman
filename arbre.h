@@ -81,7 +81,7 @@ char elem_valeur(tpn elem);
 int elem_ordre(tpn elem);
 int elem_poids(tpn elem);
 void permuter(tpn elem1, tpn elem2, t_arbre *arbre);
-void liberer_arbre(t_arbre *arbre);
+void liberer_arbre(tpn arbre);
 int nb_feuilles(tpn a);
 int profondeur(tpn arbre);
 
