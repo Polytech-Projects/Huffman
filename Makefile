@@ -13,4 +13,6 @@ main.o:  main.h main.c
 	 $(CC) $(CFlAGS) -c main.c
 clean:
 	 rm *.o huffman_exe
+release: $(OBJFILES)
+	 $(CC) -Wall -O2 -o huffman_release_exe arbre.c tools.c main.c
 
