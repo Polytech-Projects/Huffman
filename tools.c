@@ -86,7 +86,6 @@ void compression(const char *fal, const char *nf)
 			/* getc à la place de fgetc car est parfois implémenté en tant que
 			 * macro, ce qui peut induire un gain de performance. */
 			c = getc(pfl);
-			printf("%u ", c);
 			// Opérations sur l'arbre d'Huffman
 			tpn code = arbre.caracteres[(int)c];
 
@@ -94,6 +93,7 @@ void compression(const char *fal, const char *nf)
 			if (code == TPN_NULL)
 			{
 				ajout_feuille(&arbre, c);
+				ajouter_au_tampon(arbre.pfi, pfe);
 				ajouter_char_au_tampon(c, pfe);
 			}
 			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
@@ -105,6 +105,7 @@ void compression(const char *fal, const char *nf)
 		}
 		ajouter_au_tampon(arbre.pffe, pfe);
 		clear_tampon(pfe);
+		liberer_arbre(arbre.racine);
 		fclose(pfl);
 		fclose(pfe);
 	}
@@ -159,21 +160,17 @@ void ajouter_char_au_tampon(char carac, FILE *nf)
 {
 	int i;
 	// Tmp valait n'importe quoi.
-	char tmp = 0;
-
-	// C'est pas l'inverse ?
-	carac = tmp;
+	char tmp = carac;
 
 	// Le i peut s'initialiser ici
 	for(i=0; i<8; i++)
 	{
 		tmp = tmp >> 1;
 		tmp = tmp << 1;
-		ajouter_bit_tampon(tmp|carac, nf);
+		ajouter_bit_tampon((int)tmp|carac, nf);
 
 		carac = carac << 1;
 		tmp = tmp << 1;
-
 	}
 
 }
@@ -215,13 +212,14 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 	//boucle qui écrit dans le glb_stat_tampon le chemin dans l'ordre
 	//car on écrit le chemin de la racine vers la feuille.
 	//cependant il a été récupéré de la feuille à la racine.
+	printf("Parcours...\n");
 	while(taille_tab!=0)
 	{
 		taille_tab--;
 		ajouter_bit_tampon(chemin[taille_tab], nf);
+		printf("%d", chemin[taille_tab]);
 	}
-
-
+	printf("\n");
 }
 
 /** @brief Vide le tampon en rajoutant du bourrage si besoin
