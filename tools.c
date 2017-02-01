@@ -94,13 +94,17 @@ void compression(const char *fal, const char *nf)
 			if (code == TPN_NULL)
 			{
 				ajout_feuille(&arbre, c);
+				ajouter_char_au_tampon(c, pfe);
 			}
 			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
 			else
 			{
 				incrementer_feuille(&arbre, code);
+				ajouter_au_tampon(code, pfe);
 			}
 		}
+		ajouter_au_tampon(arbre.pffe, pfe);
+		clear_tampon(pfe);
 		fclose(pfl);
 		fclose(pfe);
 	}

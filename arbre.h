@@ -64,6 +64,8 @@ typedef struct t_arbre {
 	tpn caracteres[256];
 	// Pointeur sur la feuille UNKNOWN_CHAR
 	tpn pfi;
+	// Pointeur sur la feuille FAKE_EOF
+	tpn pffe;
 } t_arbre;
 
 void init_arbre(t_arbre *arbre);

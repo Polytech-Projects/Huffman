@@ -47,6 +47,7 @@ void init_arbre(t_arbre *arbre)
 	arbre->ordres[1] = noeud_fg(arbre->racine);
 	arbre->ordres[2] = noeud_fd(arbre->racine);
 	arbre->pfi = noeud_fd(arbre->racine);
+    arbre->pffe = noeud_fg(arbre->racine);
 }
 
 /** @brief Créée une feuille et la renvoie
@@ -78,7 +79,7 @@ tpn cree_feuille(short val, int ordre, int poids)
  */
 tpn cree_noeud(tpn parent, tpn fg, tpn fd, int ordre)
 {
-    assert(fg == TPN_NULL && fd == TPN_NULL);
+    assert(fg != TPN_NULL && fd != TPN_NULL);
 
     tpn noeud = (tpn)malloc(sizeof(t_noeud));
     noeud->parent = parent;
