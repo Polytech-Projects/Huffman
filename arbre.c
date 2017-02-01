@@ -338,6 +338,7 @@ void free_arbre(tpn arbre)
 	{
 		free_arbre(arbre->fg);
 		free_arbre(arbre->fd);
+		free_arbre(arbre);
 	} else{
 		free(arbre);
 	}
