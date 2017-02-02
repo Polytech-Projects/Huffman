@@ -92,8 +92,8 @@ void compression(const char *fal, const char *nf)
 			// Si le code n'est pas présent dans l'arbre
 			if (code == TPN_NULL)
 			{
-				ajout_feuille(&arbre, c);
 				ajouter_au_tampon(arbre.pfi, pfe);
+				ajout_feuille(&arbre, c);
 				ajouter_char_au_tampon(c, pfe);
 			}
 			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
@@ -159,20 +159,17 @@ void ajouter_bit_tampon(int bit, FILE *nf)
 void ajouter_char_au_tampon(char carac, FILE *nf)
 {
 	int i;
-	// Tmp valait n'importe quoi.
-	char tmp = carac;
-
-	// Le i peut s'initialiser ici
-	for(i=0; i<8; i++)
+	for(i=(sizeof(char)*8)-1; i>=0; i--)
 	{
-		tmp = tmp >> 1;
-		tmp = tmp << 1;
-		ajouter_bit_tampon((int)tmp|carac, nf);
-
-		carac = carac << 1;
-		tmp = tmp << 1;
+        if (carac&(1u<<i))
+        {
+        	ajouter_bit_tampon(1, nf);
+        }
+        else
+        {
+        	ajouter_bit_tampon(0, nf);
+        }
 	}
-
 }
 
 /** @brief Ajoute au tampon la séquence binaire d'une lettre
