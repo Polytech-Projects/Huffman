@@ -65,19 +65,39 @@ int main(int argc, char* argv[])
 	return EXIT_SUCCESS;
 }
 
+void display_titre(){
+	printf("\n");
+	printf("\t\t--------------------\n");
+	printf("\t\t|Hoffman  Compressor|\n");
+	printf("\t\t--------------------\n");
+	printf("\n");
+	printf("\n");
+}
+
+char fichier_destination(){
+	//ATTENTION, il faut rajouter la vérification du nom de fichier. un fichier ne doit pas contenir
+	//certains caractaires comme par exemple: / \ : * ? > < " |
+		char nom;
+
+		system(CLEAR);
+		display_titre();
+		printf("\tQuel est nom de fichier de destination ?\n");
+		printf("\n\t Nom: ");
+		scanf("%s",&nom);
+
+		return nom;
+	
+}
+
 void print_menu()
 {
 	int choix;
+	char* destination;
 
 	do
 	{
 		system(CLEAR);
-		printf("\n");
-		printf("\t\t--------------------\n");
-		printf("\t\t|Hoffman  Compressor|\n");
-		printf("\t\t--------------------\n");
-		printf("\n");
-		printf("\n");
+		display_titre();
 		printf("\tQue voulez vous faire ?\n");
 		printf("\t\n");
 		printf("\t%d - Compresser un fichier\n", COMPRESS);
@@ -85,19 +105,75 @@ void print_menu()
 		printf("\t%d - Compresser un message (dans un fichier)\n", COMPRESS_MSG);
 		printf("\t%d - Tester la fonction debug\n", TEST_DEBUG);
 		printf("\t0 - Quitter\n");
-		printf("\t\n");
+		printf("\n");
 		printf("\tChoix :");
 		scanf("%d", &choix);
 	}
 	while (!(choix >= 0 && choix < CHOICE_NBR));
-	system(CLEAR);
+	
 
 	switch (choix)
 	{
 		case COMPRESS:
-			compression("test.txt", "compresse.txt");
+			system(CLEAR);
+			destination = "compression.huff";
+			compression("test.txt", destination);
 		break;
 		case COMPRESS_MSG:
+			choix=0;
+			char* message;
+			FILE* fichier;
+
+			do
+			{
+				message = NULL;
+				system(CLEAR);
+
+				display_titre();
+				printf("\tQuel est votre message ?\n");
+				printf("\n\tmessage: ");
+				scanf("%s", message);
+				fichier = fopen("input.txt", "w");
+				fprintf(fichier, "%s", message);
+        		fclose(fichier);
+
+        		system(CLEAR);
+
+				display_titre();
+				printf("\tou voulez vous compresser ?\n");
+				printf("\t1- Dans un fichier\n");
+				printf("\t2- Dans la console\n");
+				printf("\n\tchoix :");
+				scanf("%d",&choix);
+
+			}while(choix!=1 || choix!=2);
+
+			if(choix == 1)
+			{
+				destination = fichier_destination();
+			} else {
+				destination = "tmp.huff";
+			}
+			compression("input.txt", destination);
+			remove("input.txt");
+			if(choix == 2)
+			{
+				fichier = fopen(destination, "r");
+ 				int caractereActuel = 0;
+			    if (fichier != NULL)
+			    {
+			        // Boucle de lecture des caractères un à un
+			        do
+			        {
+			            caractereActuel = fgetc(fichier); // On lit le caractère
+			            printf("%c", caractereActuel); // On l'affiche
+			        } while (caractereActuel != EOF); // On continue tant que fgetc n'a pas retourné EOF (fin de fichier)
+			 
+			        fclose(fichier);
+			    }
+			    remove(destination);
+			}
+
 		break;
 		case DECOMPRESS:
 		break;
