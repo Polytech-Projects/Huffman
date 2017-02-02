@@ -145,7 +145,7 @@ void ajouter_bit_tampon(int bit, FILE *nf)
 	gbl_stat_compteur_tampon++;
 
 	if(gbl_stat_compteur_tampon == 8){
-		printf("DEBUG: le glb_stat_tampon est plein ! vidage du glb_stat_tampon dans le fichier de sortie ...\n");
+		//printf("DEBUG: le glb_stat_tampon est plein ! vidage du glb_stat_tampon dans le fichier de sortie ...\n");
 		putc(glb_stat_tampon, nf);
 		init_tampon();
 	}
@@ -159,17 +159,25 @@ void ajouter_bit_tampon(int bit, FILE *nf)
 void ajouter_char_au_tampon(char carac, FILE *nf)
 {
 	int i;
+	int tab[8];
+	printf("\nEcriture char: ");
 	for(i=(sizeof(char)*8)-1; i>=0; i--)
 	{
         if (carac&(1u<<i))
         {
-        	ajouter_bit_tampon(1, nf);
+        	//ajouter_bit_tampon(1, nf);
+        	tab[i] = 1;
+        	printf("1");
         }
         else
         {
-        	ajouter_bit_tampon(0, nf);
+        	//ajouter_bit_tampon(0, nf);
+        	tab[i] = 0;
+        	printf("0");
         }
 	}
+	for (i = 0; i<8; i++) ajouter_bit_tampon(tab[i], nf);
+	printf(" fin ecrit\n");
 }
 
 /** @brief Ajoute au tampon la séquence binaire d'une lettre
@@ -204,7 +212,6 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 			taille_tab++;
 		}
 	}
-	taille_tab++;
 
 	//boucle qui écrit dans le glb_stat_tampon le chemin dans l'ordre
 	//car on écrit le chemin de la racine vers la feuille.
@@ -216,7 +223,7 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 		ajouter_bit_tampon(chemin[taille_tab], nf);
 		printf("%d", chemin[taille_tab]);
 	}
-	printf("\n");
+	printf(" fin parcours.\n");
 }
 
 /** @brief Vide le tampon en rajoutant du bourrage si besoin
