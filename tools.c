@@ -31,6 +31,8 @@
 static char glb_stat_tampon;
 static int gbl_stat_compteur_tampon;
 
+void afficher_ordre(t_arbre* arbre);
+
 /** @brief Compresse le fichier vers un autre
  *
  * Le fichier va être compression via l'algorithme de Huffman adaptatif.
@@ -93,24 +95,17 @@ void compression(const char *fal, const char *nf)
 			if (code == TPN_NULL)
 			{
 				ajouter_au_tampon(arbre.pfi, pfe);
-				ajout_feuille(&arbre, c);
 				ajouter_char_au_tampon(c, pfe);
+				ajout_feuille(&arbre, c);
 			}
 			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
 			else
 			{
-				incrementer_feuille(&arbre, code);
+				incrementer_element(&arbre, code);
 				ajouter_au_tampon(code, pfe);
 			}
 			// Affiche l'ordre de Gallager
-			int indice = 0;
-			printf("Affichage ordre et +\n");
-			while (arbre.ordres[indice] != TPN_NULL && indice < 515)
-			{
-				printf("%d->%d(%c) ordre: %d, p: %d\n", indice, arbre.ordres[indice]->val, (char)arbre.ordres[indice]->val, arbre.ordres[indice]->ord_gal, arbre.ordres[indice]->poids);
-				indice++;
-			}
-			printf("\n");
+			afficher_ordre(&arbre);
 		}
 		ajouter_au_tampon(arbre.pffe, pfe);
 		clear_tampon(pfe);
@@ -244,6 +239,17 @@ void clear_tampon(FILE *nf)
 	init_tampon();
 }
 
+void afficher_ordre(t_arbre* arbre)
+{
+	int indice = 0;
+	printf("Affichage ordre et +\n");
+	while (arbre->ordres[indice] != TPN_NULL && indice < 515)
+	{
+		printf("%d->%d(%c) ordre: %d, p: %d\n", indice, arbre->ordres[indice]->val, (char)arbre->ordres[indice]->val, arbre->ordres[indice]->ord_gal, arbre->ordres[indice]->poids);
+		indice++;
+	}
+	printf("\n");
+}
 
 /** @brief Affiche l'arbre
  *
