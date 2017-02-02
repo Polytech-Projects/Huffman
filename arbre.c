@@ -128,8 +128,7 @@ void ajout_feuille(t_arbre *arbre, unsigned char c)
 void incrementer_feuille(t_arbre *arbre, tpn feuille)
 {
 	feuille->poids++;
-	maj_poids_noeud(feuille->parent);
-	maintenir_gallager(arbre, feuille->parent);
+	maintenir_gallager(arbre, feuille);
 }
 
 /** @brief Met à jour le poids du noeud
