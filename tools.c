@@ -102,6 +102,15 @@ void compression(const char *fal, const char *nf)
 				incrementer_feuille(&arbre, code);
 				ajouter_au_tampon(code, pfe);
 			}
+			// Affiche l'ordre de Gallager
+			int indice = 0;
+			printf("Affichage ordre et +\n");
+			while (arbre.ordres[indice] != TPN_NULL && indice < 515)
+			{
+				printf("%d->%d(%c) ordre: %d, p: %d\n", indice, arbre.ordres[indice]->val, (char)arbre.ordres[indice]->val, arbre.ordres[indice]->ord_gal, arbre.ordres[indice]->poids);
+				indice++;
+			}
+			printf("\n");
 		}
 		ajouter_au_tampon(arbre.pffe, pfe);
 		clear_tampon(pfe);
@@ -159,24 +168,20 @@ void ajouter_bit_tampon(int bit, FILE *nf)
 void ajouter_char_au_tampon(char carac, FILE *nf)
 {
 	int i;
-	int tab[8];
-	printf("\nEcriture char: ");
+	printf("Ecriture char: ");
 	for(i=(sizeof(char)*8)-1; i>=0; i--)
 	{
         if (carac&(1u<<i))
         {
-        	//ajouter_bit_tampon(1, nf);
-        	tab[i] = 1;
+        	ajouter_bit_tampon(1, nf);
         	printf("1");
         }
         else
         {
-        	//ajouter_bit_tampon(0, nf);
-        	tab[i] = 0;
+        	ajouter_bit_tampon(0, nf);
         	printf("0");
         }
 	}
-	for (i = 0; i<8; i++) ajouter_bit_tampon(tab[i], nf);
 	printf(" fin ecrit\n");
 }
 
