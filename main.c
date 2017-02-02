@@ -74,16 +74,17 @@ void display_titre(){
 	printf("\n");
 }
 
-char fichier_destination(){
+char* fichier_destination(){
 	//ATTENTION, il faut rajouter la vérification du nom de fichier. un fichier ne doit pas contenir
 	//certains caractaires comme par exemple: / \ : * ? > < " |
-		char nom;
+		char* nom;
 
+		nom = NULL;
 		system(CLEAR);
 		display_titre();
 		printf("\tQuel est nom de fichier de destination ?\n");
 		printf("\n\t Nom: ");
-		scanf("%s",&nom);
+		scanf("%s",nom);
 
 		return nom;
 	
@@ -100,11 +101,11 @@ void print_menu()
 		display_titre();
 		printf("\tQue voulez vous faire ?\n");
 		printf("\t\n");
-		printf("\t%d - Compresser un fichier\n", COMPRESS);
-		printf("\t%d - Decompresser un fichier\n", DECOMPRESS);
-		printf("\t%d - Compresser un message (dans un fichier)\n", COMPRESS_MSG);
-		printf("\t%d - Tester la fonction debug\n", TEST_DEBUG);
-		printf("\t0 - Quitter\n");
+		printf("%d - Compresser un fichier\n", COMPRESS);
+		printf("%d - Decompresser un fichier\n", DECOMPRESS);
+		printf("%d - Compresser un message (dans un fichier)\n", COMPRESS_MSG);
+		printf("%d - Tester la fonction debug\n", TEST_DEBUG);
+		printf("0 - Quitter\n");
 		printf("\n");
 		printf("\tChoix :");
 		scanf("%d", &choix);
@@ -134,15 +135,16 @@ void print_menu()
 				printf("\n\tmessage: ");
 				scanf("%s", message);
 				fichier = fopen("input.txt", "w");
-				fprintf(fichier, "%s", message);
+				//ecrit dans un fichier temporaire le message rentre par l'utisateur
+				fprintf(fichier, "%s", message); //erreur de segmentation a cause de la variable message
         		fclose(fichier);
 
         		system(CLEAR);
 
 				display_titre();
 				printf("\tou voulez vous compresser ?\n");
-				printf("\t1- Dans un fichier\n");
-				printf("\t2- Dans la console\n");
+				printf("1- Dans un fichier\n");
+				printf("2- Dans la console\n");
 				printf("\n\tchoix :");
 				scanf("%d",&choix);
 
