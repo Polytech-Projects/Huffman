@@ -249,7 +249,8 @@ int elem_poids(tpn elem)
 
 /** @brief Permute les 2 éléments
  *
- * Echange leur parents, mets à jour leur ordres et le tableau d'ordres.
+ * Echange leur parents, mets à jour leur ordres, le tableau d'ordres et les fils
+ * des parents.
  * @param elem1  le 1er élément à permuter
  * @param elem2  le 2ème élément à permuter
  */
@@ -257,17 +258,29 @@ void permuter(tpn elem1, tpn elem2, t_arbre *arbre)
 {
     assert(elem1 != TPN_NULL && elem2 != TPN_NULL);
 
+    // Temporaires
     tpn tmp_parent = elem1->parent;
 	int tmp_ordre = elem1->ord_gal;
 
+    // Echange dans l'ordre de Gallager
 	arbre->ordres[elem1->ord_gal] = elem2;
 	arbre->ordres[elem2->ord_gal] = elem1;
 
+    // Echange élément 1
     elem1->parent = elem2->parent;
 	elem1->ord_gal = elem2->ord_gal;
+    // Maj parent
+    if (elem1->parent->fg == elem2)
+        elem1->parent->fg = elem1;
+    else
+        elem1->parent->fd = elem1;
 
     elem2->parent = tmp_parent;
-	elem2->ord_gal = tmp_ordre;
+    elem2->ord_gal = tmp_ordre;
+    if (elem2->parent->fg == elem1)
+        elem2->parent->fg = elem2;
+    else
+        elem2->parent->fd = elem2;
 }
 
 /** @brief Libère toute la mémoire réservé pour l'arbre
