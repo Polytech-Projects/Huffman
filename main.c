@@ -79,7 +79,6 @@ char* fichier_destination(){
 	//certains caractaires comme par exemple: / \ : * ? > < " |
 		char* nom;
 
-		nom = NULL;
 		system(CLEAR);
 		display_titre();
 		printf("\tQuel est nom de fichier de destination ?\n");
@@ -127,7 +126,7 @@ void print_menu()
 
 			do
 			{
-				message = NULL;
+				
 				system(CLEAR);
 
 				display_titre();
