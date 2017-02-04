@@ -41,3 +41,6 @@ Debug/
 *.project
 *.workspace
 .codelite/
+
+# Fichiers produits
+*.txt
