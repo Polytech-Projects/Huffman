@@ -101,14 +101,156 @@ void compression(const char *fal, const char *nf)
 			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
 			else
 			{
-				incrementer_element(&arbre, code);
 				ajouter_au_tampon(code, pfe);
+				incrementer_element(&arbre, code);
 			}
 			// Affiche l'ordre de Gallager
 			afficher_ordre(&arbre);
 		}
 		ajouter_au_tampon(arbre.pffe, pfe);
 		clear_tampon(pfe);
+		liberer_arbre(arbre.racine);
+		fclose(pfl);
+		fclose(pfe);
+	}
+}
+
+/** @brief Décompresse le fichier vers un autre
+ *
+ * Le fichier va être décompressé via l'algorithme de Huffman adaptatif.
+ *
+ * @param fal  chaine de caractère étant le nom du fichier à lire
+ * @param nf  chaine de caractère étant le nom du fichier à sauvegarder
+ * TODO: faire en sorte que la fonction soit portable (lecture taille fichier)
+ */
+void decompression(const char *fal, const char *nf)
+{
+	/* Longueur du fichier.
+	 * Attention: un fichier excédant la longueur que peut contenir cette
+	 * variable entrainera un résultat inconnu. */
+	long int tailleFichier = 0;
+	// Utilisé pour parcourir le fichier
+	long int i = 0;
+	// Utilisé pour buffer
+	int j = (sizeof(char)*8)-1;
+	// caractère actuel
+	unsigned char carac;
+	// Contient l'arbre de Gallager, son ordre, etc.
+	t_arbre arbre;
+	tpn feuille;
+	// Pointeur sur le fichier à lire.
+	FILE *pfl = fopen(fal, "r");
+	FILE *pfe = fopen(nf, "w");
+
+	// Test de l'ouverture du fichier
+	if (pfl == NULL)
+	{
+		perror ("Erreur d'ouverture du fichier.");
+	}
+	else if (pfe == NULL)
+	{
+		/* Si impossible de créer un fichier pour écrire,
+		 * on ferme celui qui a été ouvert pour la lecture. */
+		fclose(pfl);
+		perror ("Erreur d'ouverture du fichier.");
+	}
+	else
+	{
+		// Si la feuille est le caractère inconnu, on lit
+		// les 8 prochains bit et création du noeud avec le char
+		// et maintient de l'ordre
+
+		// Si la feuille est un caractère, on incrémente ce dernier
+
+		// Si la feuille mène à la fin de fichier, on stop la lecture.
+		// Variante, stop à la fin de fichier et si on a lu caractère
+		// de fin, decompression OK sinon ERREUR (fichier corrompu)
+
+		fseek (pfl, 0, SEEK_END);   // non-portable
+		tailleFichier = ftell(pfl);
+		rewind(pfl); // Important, remet le curseur en début de fichier
+		printf ("Le fichier contient: %ld caractères.\n", tailleFichier);
+		
+		// Création de l'arbre de base (racine + feuille EOF et caractère inconnu)
+		init_arbre(&arbre);
+
+		if (tailleFichier != 0)
+		{
+			carac = getc(pfl);
+			tailleFichier++;
+		}
+		// Lecture du complète du fichier.
+		while (i < tailleFichier)
+		{
+			// On lit un caractère et on décode son binaire pour
+			// tomber sur une feuille de l'arbre de Gallager.
+			// Tant que pas tombé sur feuille et buffer pas vide
+			feuille = arbre.racine;
+			while (!est_feuille(feuille) && i < tailleFichier)
+			{
+				if (j < 0)
+		        {
+		        	// Rempli buffer
+		        	carac = getc(pfl);
+		        	j = (sizeof(char)*8)-1;
+		        	i++;
+		        }
+		        if (carac&(1u<<j))
+		        {
+		        	// Aller à droite
+		        	feuille = feuille->fd;
+		        }
+		        else
+		        {
+		        	// Aller à gauche
+		        	feuille = feuille->fg;
+		        }
+		        j--;
+			}
+			// Si la feuille est le caractère inconnu, on lit
+			// les 8 prochains bit et création du noeud avec le char
+			// et maintient de l'ordre
+			if (feuille->val == UNKNOWN_CHAR)
+			{
+				// Lire 8 prochain bit
+				int compteurChar = (sizeof(char)*8)-1;
+				char charLu = 0;
+				while (compteurChar >= 0 && i < tailleFichier)
+				{
+					if (j < 0)
+					{
+						carac = getc(pfl);
+						j = (sizeof(char)*8)-1;
+						i++;
+					}
+					if (carac&(1u<<j))
+					{
+						charLu = charLu|(1u<<compteurChar);
+						compteurChar--;
+						j--;
+					}
+					else
+					{
+						compteurChar--;
+						j--;
+					}
+				}
+				// charLu contient le char a ajouter
+				putc(charLu, pfe);
+				ajout_feuille(&arbre, charLu);
+			}
+			else if (feuille->val == FAKE_EOF)
+			{
+				// Arrete tout
+				i = tailleFichier;
+			}
+			// Si la feuille est un caractère, on incrémente ce dernier
+			else
+			{
+				putc((char)feuille->val, pfe);
+				incrementer_element(&arbre, feuille);
+			}
+		}
 		liberer_arbre(arbre.racine);
 		fclose(pfl);
 		fclose(pfe);

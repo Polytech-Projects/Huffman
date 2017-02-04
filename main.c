@@ -177,6 +177,7 @@ void print_menu()
 
 		break;
 		case DECOMPRESS:
+			decompression("compresse.txt", "clair.txt");
 		break;
 		case TEST_DEBUG:
 		break;
