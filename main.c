@@ -65,7 +65,8 @@ int main(int argc, char* argv[])
 	return EXIT_SUCCESS;
 }
 
-void display_titre(){
+void display_titre()
+{
 	printf("\n");
 	printf("\t\t--------------------\n");
 	printf("\t\t|Hoffman  Compressor|\n");
@@ -74,25 +75,22 @@ void display_titre(){
 	printf("\n");
 }
 
-char* fichier_destination(){
+void fichier_destination(char* fichierDestination)
+{
 	//ATTENTION, il faut rajouter la vérification du nom de fichier. un fichier ne doit pas contenir
 	//certains caractaires comme par exemple: / \ : * ? > < " |
-		char* nom;
 
 		system(CLEAR);
 		display_titre();
-		printf("\tQuel est nom de fichier de destination ?\n");
+		printf("\tQuel est nom de fichier de destination ? (max chemin de 512 caracteres)\n");
 		printf("\n\t Nom: ");
-		scanf("%s",nom);
-
-		return nom;
-	
+		scanf("%s",fichierDestination);
 }
 
 void print_menu()
 {
 	int choix;
-	char* destination;
+	char destination[512] = {0};
 
 	do
 	{
@@ -111,32 +109,32 @@ void print_menu()
 	}
 	while (!(choix >= 0 && choix < CHOICE_NBR));
 	
-
 	switch (choix)
 	{
 		case COMPRESS:
 			system(CLEAR);
-			destination = "compression.huff";
-			compression("test.txt", destination);
+			compression("test.txt", "compression.huff");
 		break;
 		case COMPRESS_MSG:
 			choix=0;
-			char* message;
-			FILE* fichier;
+			char message[1024];
+			FILE* fichier = NULL;
 
 			do
 			{
-				
 				system(CLEAR);
 
 				display_titre();
 				printf("\tQuel est votre message ?\n");
-				printf("\n\tmessage: ");
+				printf("\n\tmessage (max 512 caracteres): ");
 				scanf("%s", message);
 				fichier = fopen("input.txt", "w");
 				//ecrit dans un fichier temporaire le message rentre par l'utisateur
-				fprintf(fichier, "%s", message); //erreur de segmentation a cause de la variable message
-        		fclose(fichier);
+				if (fichier != NULL)
+				{
+					fprintf(fichier, "%s", message);
+        			fclose(fichier);
+				}
 
         		system(CLEAR);
 
@@ -147,15 +145,16 @@ void print_menu()
 				printf("\n\tchoix :");
 				scanf("%d",&choix);
 
-			}while(choix!=1 || choix!=2);
+			}while(choix!=1 && choix!=2);
 
 			if(choix == 1)
 			{
-				destination = fichier_destination();
+				fichier_destination(destination);
+				compression("input.txt", destination);
 			} else {
-				destination = "tmp.huff";
+				strcpy(destination, "tmp.huff");
+				compression("input.txt", destination);
 			}
-			compression("input.txt", destination);
 			remove("input.txt");
 			if(choix == 2)
 			{
@@ -174,7 +173,6 @@ void print_menu()
 			    }
 			    remove(destination);
 			}
-
 		break;
 		case DECOMPRESS:
 			decompression("compresse.txt", "clair.txt");
