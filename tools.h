@@ -28,6 +28,7 @@
 #include "arbre.h"
 
 void compression(const char *fal, const char *nf);
+void decompression(const char *fal, const char *nf);
 int fichier_existe(const char * const nom);
 void init_tampon();
 void ajouter_bit_tampon(int bit, FILE *nf);

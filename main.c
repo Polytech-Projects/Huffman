@@ -100,6 +100,7 @@ void print_menu()
 		case COMPRESS_MSG:
 		break;
 		case DECOMPRESS:
+			decompression("compresse.txt", "clair.txt");
 		break;
 		case TEST_DEBUG:
 		break;
