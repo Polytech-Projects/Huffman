@@ -33,6 +33,80 @@ static int gbl_stat_compteur_tampon;
 
 void afficher_ordre(t_arbre* arbre);
 
+void debug_compression(const char *fal, const char *nf)
+{
+	/* Longueur du fichier.
+	 * Attention: un fichier excédant la longueur que peut contenir cette
+	 * variable entrainera un résultat inconnu. */
+	long int tailleFichier = 0;
+	// Utilisé pour parcourir le fichier
+	long int i;
+	// caractère actuel
+	unsigned char c;
+	// Contient l'arbre de Gallager, son ordre, etc.
+	t_arbre arbre;
+	// Pointeur sur le fichier à lire.
+	FILE *pfl = fopen(fal, "r");
+	FILE *pfe = fopen(nf, "w");
+
+	// Test de l'ouverture du fichier
+	if (pfl == NULL)
+	{
+		perror ("Erreur d'ouverture du fichier.");
+	}
+	else if (pfe == NULL)
+	{
+		/* Si impossible de créer un fichier pour écrire,
+		 * on ferme celui qui a été ouvert pour la lecture. */
+		fclose(pfl);
+		perror ("Erreur d'ouverture du fichier.");
+	}
+	else
+	{
+		fseek (pfl, 0, SEEK_END);   // non-portable
+		tailleFichier = ftell(pfl);
+		rewind(pfl); // Important, remet le curseur en début de fichier
+		printf ("Le fichier contient: %ld caractères.\n", tailleFichier);
+		
+		// Création de l'arbre de base (racine + feuille EOF et caractère inconnu)
+		init_arbre(&arbre);
+		/* On s'assure que les glb_stat_tampon soient réinitialisé (cas de plusieurs
+		 * compression effectué d'affilé. */
+		init_tampon();
+
+		// Lecture du complète du fichier.
+		for (i = 0; i < tailleFichier; i++)
+		{
+			/* getc à la place de fgetc car est parfois implémenté en tant que
+			 * macro, ce qui peut induire un gain de performance. */
+			c = getc(pfl);
+			// Opérations sur l'arbre d'Huffman
+			tpn code = arbre.caracteres[(int)c];
+
+			// Si le code n'est pas présent dans l'arbre
+			if (code == TPN_NULL)
+			{
+				ajouter_au_tampon(arbre.pfi, pfe);
+				ajouter_char_au_tampon(c, pfe);
+				ajout_feuille(&arbre, c);
+			}
+			// On doit rééquilibrer l'arbre et incrémenter de 1 succésivement
+			else
+			{
+				ajouter_au_tampon(code, pfe);
+				incrementer_element(&arbre, code);
+			}
+			// Affiche l'ordre de Gallager
+			afficher_ordre(&arbre);
+		}
+		ajouter_au_tampon(arbre.pffe, pfe);
+		clear_tampon(pfe);
+		liberer_arbre(arbre.racine);
+		fclose(pfl);
+		fclose(pfe);
+	}
+}
+
 /** @brief Compresse le fichier vers un autre
  *
  * Le fichier va être compression via l'algorithme de Huffman adaptatif.
@@ -105,7 +179,6 @@ void compression(const char *fal, const char *nf)
 				incrementer_element(&arbre, code);
 			}
 			// Affiche l'ordre de Gallager
-			afficher_ordre(&arbre);
 		}
 		ajouter_au_tampon(arbre.pffe, pfe);
 		clear_tampon(pfe);
@@ -305,21 +378,21 @@ void ajouter_bit_tampon(int bit, FILE *nf)
 void ajouter_char_au_tampon(char carac, FILE *nf)
 {
 	int i;
-	printf("Ecriture char: ");
+	//printf("Ecriture char: ");
 	for(i=(sizeof(char)*8)-1; i>=0; i--)
 	{
         if (carac&(1u<<i))
         {
         	ajouter_bit_tampon(1, nf);
-        	printf("1");
+        	//printf("1");
         }
         else
         {
         	ajouter_bit_tampon(0, nf);
-        	printf("0");
+        	//printf("0");
         }
 	}
-	printf(" fin ecrit\n");
+	//printf(" fin ecrit\n");
 }
 
 /** @brief Ajoute au tampon la séquence binaire d'une lettre
@@ -358,14 +431,14 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
 	//boucle qui écrit dans le glb_stat_tampon le chemin dans l'ordre
 	//car on écrit le chemin de la racine vers la feuille.
 	//cependant il a été récupéré de la feuille à la racine.
-	printf("Parcours...\n");
+	//printf("Parcours...\n");
 	while(taille_tab!=0)
 	{
 		taille_tab--;
 		ajouter_bit_tampon(chemin[taille_tab], nf);
-		printf("%d", chemin[taille_tab]);
+		//printf("%d", chemin[taille_tab]);
 	}
-	printf(" fin parcours.\n");
+	//printf(" fin parcours.\n");
 }
 
 /** @brief Vide le tampon en rajoutant du bourrage si besoin
@@ -374,7 +447,7 @@ void ajouter_au_tampon(tpn arbre, FILE *nf)
  */
 void clear_tampon(FILE *nf)
 {
-	printf("DEBUG: ajout de bits de bourrage au glb_stat_tampon et vidage du glb_stat_tampon dans le fichier de sortie\n");
+	//printf("DEBUG: ajout de bits de bourrage au glb_stat_tampon et vidage du glb_stat_tampon dans le fichier de sortie\n");
 	glb_stat_tampon = glb_stat_tampon << (8 - gbl_stat_compteur_tampon);
 	gbl_stat_compteur_tampon = 8;
 	putc(glb_stat_tampon, nf);
@@ -387,7 +460,7 @@ void afficher_ordre(t_arbre* arbre)
 	printf("Affichage ordre et +\n");
 	while (arbre->ordres[indice] != TPN_NULL && indice < 515)
 	{
-		printf("%d->%d(%c) ordre: %d, p: %d\n", indice, arbre->ordres[indice]->val, (char)arbre->ordres[indice]->val, arbre->ordres[indice]->ord_gal, arbre->ordres[indice]->poids);
+		//printf("%d->%d(%c) ordre: %d, p: %d\n", indice, arbre->ordres[indice]->val, (char)arbre->ordres[indice]->val, arbre->ordres[indice]->ord_gal, arbre->ordres[indice]->poids);
 		indice++;
 	}
 	printf("\n");

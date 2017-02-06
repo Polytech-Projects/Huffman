@@ -104,18 +104,21 @@ void print_menu()
 {
 	int choix;
 	char destination[512] = {0};
+	char fichier_a_compresser[512] = {0};
+	char message[1024];
+	FILE* fichier = NULL;
 
 	do
 	{
 		system(CLEAR);
 		display_titre();
-		printf("\tQue voulez vous faire ?\n");
+		printf("\t\tQue voulez vous faire ?\n");
 		printf("\t\n");
-		printf("%d - Compresser un fichier\n", COMPRESS);
-		printf("%d - Decompresser un fichier\n", DECOMPRESS);
-		printf("%d - Compresser un message (dans un fichier)\n", COMPRESS_MSG);
-		printf("%d - Tester la fonction debug\n", TEST_DEBUG);
-		printf("0 - Quitter\n");
+		printf("\t%d - Compresser un fichier\n", COMPRESS);
+		printf("\t%d - Decompresser un fichier\n", DECOMPRESS);
+		printf("\t%d - Compresser un message (dans un fichier)\n", COMPRESS_MSG);
+		printf("\t%d - Tester la fonction debug\n", TEST_DEBUG);
+		printf("\t0 - Quitter\n");
 		printf("\n");
 		printf("\tChoix :");
 		scanf("%d", &choix);
@@ -126,13 +129,28 @@ void print_menu()
 	{
 		case COMPRESS:
 			system(CLEAR);
-			compression("test.txt", "compression.huff");
+			printf("\tEntrez le chemin du fichier à compresser\n");
+			scanf("%s", fichier_a_compresser);
+			if (fichier_existe(fichier_a_compresser))
+			{
+				if (strlen(fichier_a_compresser)+1 < 256-6)
+				{
+					strcpy(destination, fichier_a_compresser);
+					strcat(destination, ".huff");
+				}
+				// Sinon on coupe le nom
+				else
+				{
+					strncpy(destination, fichier_a_compresser, 256-6);
+					strcat(destination, ".huff");
+				}
+				compression(fichier_a_compresser, destination);
+				printf("\nVotre fichier se trouve à l'emplacement suivant:\n\t\
+						%s\n", destination);
+			}
 		break;
 		case COMPRESS_MSG:
 			choix=0;
-			char message[1024];
-			FILE* fichier = NULL;
-
 			do
 			{
 				system(CLEAR);
@@ -188,9 +206,73 @@ void print_menu()
 			}
 		break;
 		case DECOMPRESS:
-			decompression("compresse.txt", "clair.txt");
+			system(CLEAR);
+			printf("\tEntrez le chemin du fichier à decompresser\n");
+			scanf("%s", fichier_a_compresser);
+			if (fichier_existe(fichier_a_compresser))
+			{
+				strcpy(destination, fichier_a_compresser);
+				destination[strlen(destination)-5] = '\0';
+				decompression(fichier_a_compresser, destination);
+				printf("\nVotre fichier se trouve à l'emplacement suivant:\n\t\
+						%s\n", destination);
+			}
 		break;
 		case TEST_DEBUG:
+			choix=0;
+			do
+			{
+				system(CLEAR);
+
+				display_titre();
+				printf("\tQuel est votre message ?\n");
+				printf("\n\tmessage (max 512 caracteres): ");
+				scanf("%s", message);
+				fichier = fopen("input.txt", "w");
+				//ecrit dans un fichier temporaire le message rentre par l'utisateur
+				if (fichier != NULL)
+				{
+					fprintf(fichier, "%s", message);
+        			fclose(fichier);
+				}
+
+        		system(CLEAR);
+
+				display_titre();
+				printf("\tou voulez vous compresser ?\n");
+				printf("1- Dans un fichier\n");
+				printf("2- Dans la console\n");
+				printf("\n\tchoix :");
+				scanf("%d",&choix);
+
+			}while(choix!=1 && choix!=2);
+
+			if(choix == 1)
+			{
+				fichier_destination(destination);
+				debug_compression("input.txt", destination);
+			} else {
+				strcpy(destination, "tmp.huff");
+				debug_compression("input.txt", destination);
+			}
+			remove("input.txt");
+			if(choix == 2)
+			{
+				fichier = fopen(destination, "r");
+ 				int caractereActuel = 0;
+			    if (fichier != NULL)
+			    {
+			        // Boucle de lecture des caractères un à un
+			        do
+			        {
+			            caractereActuel = fgetc(fichier); // On lit le caractère
+			            printf("%c", caractereActuel); // On l'affiche
+			        } while (caractereActuel != EOF); // On continue tant que fgetc n'a pas retourné EOF (fin de fichier)
+			 
+			        fclose(fichier);
+			    }
+			    remove(destination);
+			}
 		break;
 		default:
 		break;
