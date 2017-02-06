@@ -25,6 +25,7 @@
 #include "tools.h"
 #include "arbre.h"
 #include <assert.h>
+#include <time.h>
 
 /* Déclaration dans le .c en static car on en veut pas que ces variables
  * soient visibles ailleurs que dans ce fichier. */
@@ -117,6 +118,8 @@ void debug_compression(const char *fal, const char *nf)
  */
 void compression(const char *fal, const char *nf)
 {
+	time_t debut, fin;
+	time(&debut); // On stock le temps de début
 	/* Longueur du fichier.
 	 * Attention: un fichier excédant la longueur que peut contenir cette
 	 * variable entrainera un résultat inconnu. */
@@ -178,13 +181,15 @@ void compression(const char *fal, const char *nf)
 				ajouter_au_tampon(code, pfe);
 				incrementer_element(&arbre, code);
 			}
-			// Affiche l'ordre de Gallager
 		}
 		ajouter_au_tampon(arbre.pffe, pfe);
 		clear_tampon(pfe);
 		liberer_arbre(arbre.racine);
 		fclose(pfl);
+		long int tailleCompresse = ftell(pfe);
 		fclose(pfe);
+		time(&fin);
+		printf("Temps de compression: %.3f secondes, compresse a %.3f%%", difftime(fin, debut), (1.f-(double)tailleCompresse/(double)tailleFichier)*100.f);
 	}
 }
 
@@ -198,6 +203,8 @@ void compression(const char *fal, const char *nf)
  */
 void decompression(const char *fal, const char *nf)
 {
+	time_t debut, fin;
+	time(&debut); // On stock le temps de début
 	/* Longueur du fichier.
 	 * Attention: un fichier excédant la longueur que peut contenir cette
 	 * variable entrainera un résultat inconnu. */
@@ -327,6 +334,8 @@ void decompression(const char *fal, const char *nf)
 		liberer_arbre(arbre.racine);
 		fclose(pfl);
 		fclose(pfe);
+		time(&fin);
+		printf("Temps de decompression: %3f secondes.", difftime(fin, debut));
 	}
 }
 
