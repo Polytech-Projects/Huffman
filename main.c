@@ -40,19 +40,32 @@ int main(int argc, char* argv[])
 			char nom_compresse[256] = {'\0'};
 			if (fichier_existe(argv[i]))
 			{
-				// Si nom assez court
-				if (strlen(argv[i])+1 < 256-6)
+				/* On regarde si le fichier est à compresser ou
+				 * décompresser. */
+				if (strstr(argv[i], ".huff") != NULL)
 				{
+					// Contient notre extension, c'est à décompresser
 					strcpy(nom_compresse, argv[i]);
-					strcat(nom_compresse, ".huff");
+					nom_compresse[strlen(nom_compresse)-5] = '\0';
+					decompression(argv[i], nom_compresse);
 				}
-				// Sinon on coupe le nom
 				else
 				{
-					strncpy(nom_compresse, argv[i], 256-6);
-					strcat(nom_compresse, ".huff");
+					// C'est à compresser
+					// Si nom assez court
+					if (strlen(argv[i])+1 < 256-6)
+					{
+						strcpy(nom_compresse, argv[i]);
+						strcat(nom_compresse, ".huff");
+					}
+					// Sinon on coupe le nom
+					else
+					{
+						strncpy(nom_compresse, argv[i], 256-6);
+						strcat(nom_compresse, ".huff");
+					}
+					compression(argv[i], nom_compresse);
 				}
-				compression(argv[i], "");
 			}
 		}
 	}
