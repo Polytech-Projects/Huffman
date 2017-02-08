@@ -189,7 +189,10 @@ void compression(const char *fal, const char *nf)
 		long int tailleCompresse = ftell(pfe);
 		fclose(pfe);
 		time(&fin);
-		printf("Temps de compression: %.3f secondes, compresse a %.3f%%", difftime(fin, debut), (1.f-(double)tailleCompresse/(double)tailleFichier)*100.f);
+		double temps = difftime(fin, debut);
+		printf("Fichier %s\n", fal);
+		printf("Temps de compression: %.3f secondes, compresse a %.3f%%, vitesse moyenne: %.3fko/s", \
+			temps, (1.f-(double)tailleCompresse/(double)tailleFichier)*100.f, (tailleCompresse/1000.f)/temps);
 	}
 }
 
